@@ -14,7 +14,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "68933481586-t3icva90embesocu4hv2q4qpjiarbveb.apps.googleusercontent.com",
+          "client_id": "68933481586-p3efu33ubu5394ca7iktadecfm2e8no2.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,8 +27,15 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "68933481586-t3icva90embesocu4hv2q4qpjiarbveb.apps.googleusercontent.com",
+              "client_id": "68933481586-p3efu33ubu5394ca7iktadecfm2e8no2.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "68933481586-r71s91oc07o86l24k3mfibsi8o8blkqo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ca.mcmaster.audioapp"
+              }
             }
           ]
         }
