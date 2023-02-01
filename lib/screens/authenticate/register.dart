@@ -1,9 +1,12 @@
 import 'package:audioapp/services/auth.dart';
+import 'package:audioapp/shared/loading.dart';
 import 'package:flutter/material.dart';
 
-class Register extends StatefulWidget {
+import '../../shared/constants.dart';
 
+class Register extends StatefulWidget {
   final Function toggleView;
+
   Register({super.key, required this.toggleView});
 
   @override
@@ -11,15 +14,17 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
   final AuthService _auth = AuthService();
+  final _formkey = GlobalKey<FormState>();
+  bool loading = false;
 
-  String email ="";
-  String password ="";
+  String email = "";
+  String password = "";
+  String error ="";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading? Loading() : Scaffold(
       backgroundColor: Colors.brown[100],
       appBar: AppBar(
         backgroundColor: Colors.brown[400],
@@ -35,13 +40,16 @@ class _RegisterState extends State<Register> {
             style: TextButton.styleFrom(
               foregroundColor: Colors.white,
             ),
-          ),],
+          ),
+        ],
       ),
       body: Column(
         children: [
           Container(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
               child: Form(
+                key: _formkey,
                 child: Column(
                   children: [
                     const SizedBox(height: 20.0),
@@ -49,32 +57,50 @@ class _RegisterState extends State<Register> {
                       onChanged: (val) {
                         setState(() => email = val);
                       },
-                      decoration: const InputDecoration(
-                        hintText: 'Email',
-                      ),
+                      validator: (val) =>
+                          val!.isEmpty ? 'Enter an email' : null,
+                      decoration: textInputDecoration.copyWith(hintText: 'Email'),
                     ),
                     const SizedBox(height: 20.0),
                     TextFormField(
                       onChanged: (val) {
                         setState(() => password = val);
                       },
-                      decoration: const InputDecoration(
-                        hintText: 'Password',
-                      ),
+                      validator: (val) => val!.length < 6
+                          ? 'Enter a password 6+ chars long'
+                          : null,
+                      decoration: textInputDecoration.copyWith(hintText: 'Password'),
                       obscureText: true,
                     ),
                     const SizedBox(height: 20.0),
                     ElevatedButton(
                       child: const Text('Sign up with Email and Password'),
                       onPressed: () async {
-                        print(email);
-                        print(password);
+                        if (_formkey.currentState!.validate()) {
+                          setState(() {
+                            loading = true;
+                          });
+                          dynamic result = await _auth.registerWithEmailAndPassword(
+                              email, password);
+                          setState(() => loading = false);
+                          if (result == null) {
+                            setState(() {
+                              error = 'Registration Error!';
+                            });
+                          } else {
+                            print('registered');
+                          }
+                        }
                       },
                     ),
+                    const SizedBox(height: 12.0),
+                    Text(
+                      error,
+                      style: const TextStyle(color: Colors.red, fontSize: 14.0),
+                    )
                   ],
                 ),
-              )
-          )
+              ))
         ],
       ),
     );

@@ -1,5 +1,8 @@
 import 'package:audioapp/services/auth.dart';
+import 'package:audioapp/shared/loading.dart';
 import 'package:flutter/material.dart';
+
+import '../../shared/constants.dart';
 
 class SignIn extends StatefulWidget {
 
@@ -13,13 +16,18 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
 
   final AuthService _auth = AuthService();
+  final _formkey = GlobalKey<FormState>();
+  bool loading = false;
 
   String email ="";
   String password ="";
+  String error ="";
+
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       backgroundColor: Colors.brown[100],
       appBar: AppBar(
         backgroundColor: Colors.brown[400],
@@ -72,6 +80,7 @@ class _SignInState extends State<SignIn> {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
             child: Form(
+              key: _formkey,
               child: Column(
                 children: [
                   const SizedBox(height: 20.0),
@@ -79,35 +88,41 @@ class _SignInState extends State<SignIn> {
                     onChanged: (val) {
                       setState(() => email = val);
                     },
-                    decoration: const InputDecoration(
-                      hintText: 'Email',
-                    ),
+                    validator: (val) => val!.isEmpty ? 'Enter an email' : null,
+                    decoration: textInputDecoration.copyWith(hintText: 'Email'),
                   ),
                   const SizedBox(height: 20.0),
                   TextFormField(
                     onChanged: (val) {
                       setState(() => password = val);
                     },
-                    decoration: const InputDecoration(
-                      hintText: 'Password',
-                    ),
+                    validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
+                    decoration:textInputDecoration.copyWith(hintText: 'Password'),
                     obscureText: true,
                   ),
                   const SizedBox(height: 20.0),
                   ElevatedButton(
                     child: const Text('Sign in with Email and Password'),
                     onPressed: () async {
-                      print(email);
-                      print(password);
-
-                      // dynamic result = await _auth.signInWithEmailAndPassword(email, password);
-                      // if (result == null) {
-                      //   print('error signing in');
-                      // } else {
-                      //   print('signed in');
-                      //   print(result.uid);
-                      // }
+                      if (_formkey.currentState!.validate()) {
+                        setState(() => loading = true);
+                        dynamic result = await _auth.signinWithEmailAndPassword(
+                            email, password);
+                        setState(() => loading = false);
+                        if (result == null) {
+                          setState(() {
+                            error = 'Sign In Error!';
+                          });
+                        } else {
+                          print('signed in');
+                        }
+                      }
                     },
+                  ),
+                  const SizedBox(height: 20.0),
+                  Text(
+                    error,
+                    style: const TextStyle(color: Colors.red, fontSize: 14.0),
                   ),
                 ],
               ),

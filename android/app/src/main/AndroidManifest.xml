@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ca.mcmaster.audioapp">
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <application
         android:label="audioapp"
         android:name="${applicationName}"
