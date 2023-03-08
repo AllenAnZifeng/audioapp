@@ -1,6 +1,7 @@
 import 'package:audioapp/models/appUser.dart';
 import 'package:audioapp/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -29,8 +30,40 @@ class AuthService {
     }
 }
 
+  // sign in with google
+  Future<AppUser?> signInWithGoogle() async {
+    try {
+
+        final GoogleSignIn googleSignIn = GoogleSignIn();
+
+        final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+
+        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+
+      // Once signed in, return the UserCredential
+      UserCredential result = await _auth.signInWithCredential(credential);
+      User? user = result.user;
+      // check if user is already in database
+      bool userExists = await DatabaseService(uid: user!.uid).checkUserExists();
+
+      if (!userExists) {
+        await DatabaseService(uid: user.uid).updateUserData('0', 'new crew member', 100);
+      }
+      return _appUserFromFirebaseUser(user);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   // sign in with email and password
-  Future signinWithEmailAndPassword(String email, String password) async {
+  Future<AppUser?> signinWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       User? user = result.user;

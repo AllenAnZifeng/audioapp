@@ -57,7 +57,7 @@ class Home extends StatelessWidget {
           ],
         ),
         body: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/coffee_bg.png'),
                 fit: BoxFit.cover,

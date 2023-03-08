@@ -19,6 +19,11 @@ class DatabaseService {
     });
   }
 
+  Future<bool> checkUserExists() async {
+    DocumentSnapshot snapshot = await brewCollection.doc(uid).get();
+    return snapshot.exists;
+  }
+
   // brew list from snapshot
   List<Brew> _brewListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
@@ -31,6 +36,7 @@ class DatabaseService {
   }
 
   Stream<List<Brew>> get getBrews {
+
     return brewCollection.snapshots().map(_brewListFromSnapshot);
   }
 

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:audioapp/models/appUser.dart';
 
+import 'authenticate/authHome.dart';
+
 class Wrapper extends StatelessWidget {
 
   @override
@@ -11,7 +13,7 @@ class Wrapper extends StatelessWidget {
     final appUser = Provider.of<AppUser?>(context);
 
     if (appUser == null) {
-      return Authenticate();
+      return AuthHome();
     } else {
       return Home();
     }

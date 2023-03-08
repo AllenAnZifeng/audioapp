@@ -1,6 +1,8 @@
+import 'package:audioapp/models/appUser.dart';
 import 'package:audioapp/services/auth.dart';
 import 'package:audioapp/shared/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../shared/constants.dart';
 
@@ -52,7 +54,7 @@ class _SignInState extends State<SignIn> {
             child: ElevatedButton(
               child: const Text('Guest Sign in'),
               onPressed: () async {
-                dynamic result = await _auth.signInAnonymously();
+                AppUser? result = await _auth.signInAnonymously();
                 if (result == null) {
                   print('error signing in');
                 } else {
@@ -62,21 +64,6 @@ class _SignInState extends State<SignIn> {
               },
             )
           ),
-          // Container(
-          //   padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-          //   child: ElevatedButton(
-          //     child: const Text('Sign in with Google'),
-          //     onPressed: () async {
-          //       // dynamic result = await _auth.signInWithGoogle();
-          //       // if (result == null) {
-          //       //   print('error signing in');
-          //       // } else {
-          //       //   print('signed in');
-          //       //   print(result.uid);
-          //       // }
-          //     },
-          //   )
-          // ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
             child: Form(
@@ -106,7 +93,7 @@ class _SignInState extends State<SignIn> {
                     onPressed: () async {
                       if (_formkey.currentState!.validate()) {
                         setState(() => loading = true);
-                        dynamic result = await _auth.signinWithEmailAndPassword(
+                        AppUser? result = await _auth.signinWithEmailAndPassword(
                             email, password);
                         setState(() => loading = false);
                         if (result == null) {
@@ -115,6 +102,10 @@ class _SignInState extends State<SignIn> {
                           });
                         } else {
                           print('signed in');
+                          if (context.mounted){
+                            // GoRouter.of(context).go('/');
+                            Navigator.pop(context);
+                          }
                         }
                       }
                     },
