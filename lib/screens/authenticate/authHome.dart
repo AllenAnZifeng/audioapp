@@ -70,10 +70,10 @@ class AuthHome extends StatelessWidget {
                   final AuthService _auth = AuthService();
                   AppUser? result = await _auth.signInWithGoogle();
                   if (result == null) {
-                    print('error signing in');
+                    debugPrint('error signing in');
                   } else {
-                    print('signed in');
-                    print(result.uid);
+                    debugPrint('signed in');
+                    debugPrint(result.uid);
 
                   }
                 },

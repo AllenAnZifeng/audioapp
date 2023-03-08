@@ -56,10 +56,10 @@ class _SignInState extends State<SignIn> {
               onPressed: () async {
                 AppUser? result = await _auth.signInAnonymously();
                 if (result == null) {
-                  print('error signing in');
+                  debugPrint('error signing in');
                 } else {
-                  print('signed in');
-                  print(result.uid);
+                  debugPrint('signed in');
+                  debugPrint(result.uid);
                 }
               },
             )
@@ -101,7 +101,7 @@ class _SignInState extends State<SignIn> {
                             error = 'Sign In Error!';
                           });
                         } else {
-                          print('signed in');
+                          debugPrint('signed in');
                           if (context.mounted){
                             // GoRouter.of(context).go('/');
                             Navigator.pop(context);

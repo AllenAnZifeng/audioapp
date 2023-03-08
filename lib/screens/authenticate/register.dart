@@ -88,7 +88,7 @@ class _RegisterState extends State<Register> {
                               error = 'Registration Error!';
                             });
                           } else {
-                            print('registered');
+                            debugPrint('registered');
                           }
                         }
                       },
