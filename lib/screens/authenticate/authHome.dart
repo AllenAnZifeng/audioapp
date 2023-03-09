@@ -78,6 +78,7 @@ class AuthHome extends StatelessWidget {
                   }
                 },
               )),
+
         ],
       ),
     );

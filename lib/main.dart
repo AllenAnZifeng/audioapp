@@ -4,6 +4,7 @@
 
 import 'package:audioapp/screens/authenticate/authenticate.dart';
 import 'package:audioapp/screens/home/home.dart';
+import 'package:audioapp/screens/preTest/headphone.dart';
 import 'package:audioapp/screens/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -35,6 +36,10 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: "/authenticate",
         builder: (context, state) => const Authenticate(),
+      ),
+      GoRoute(
+        path: "/preTestHeadPhone",
+        builder: (context, state) => const HeadPhone(),
       )
     ],
   );
@@ -45,6 +50,9 @@ class MyApp extends StatelessWidget {
         value: AuthService().getUser,
         initialData: null,
         child: MaterialApp.router(
+          theme: ThemeData(
+            useMaterial3: true,
+          ),
           routerConfig: _router,
         ),
       );
