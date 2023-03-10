@@ -44,8 +44,7 @@ class _HomeState extends State<Home> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const HeadPhone()),
-      );
+            builder: (context) => HeadPhone(test: test)));
     }
 
     return StreamProvider<List<Brew>?>.value(

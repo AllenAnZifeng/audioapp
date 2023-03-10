@@ -91,7 +91,7 @@ class _SettingFormState extends State<SettingForm> {
                     },
                     child: const Text(
                       'Update',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.black),
                     ),
                   ),
                 ],

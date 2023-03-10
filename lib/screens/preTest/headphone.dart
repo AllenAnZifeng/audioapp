@@ -2,7 +2,8 @@ import 'package:audioapp/screens/preTest/quiet.dart';
 import 'package:flutter/material.dart';
 
 class HeadPhone extends StatelessWidget {
-  const HeadPhone({Key? key}) : super(key: key);
+  final String test;
+  const HeadPhone({Key? key, required this.test}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class HeadPhone extends StatelessWidget {
 
           ElevatedButton(
                 child: const Padding(
-                  padding: EdgeInsets.all(15.0),
+                  padding: EdgeInsets.all(20.0),
                   child: Text(
                     'Next',
                     style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
@@ -47,7 +48,7 @@ class HeadPhone extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const Quiet()),
+                        builder: (context) =>  Quiet(test: test)),
                   );
                 },
               ),

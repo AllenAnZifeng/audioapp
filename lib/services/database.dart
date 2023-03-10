@@ -16,6 +16,24 @@ class DatabaseService {
       'sugars': sugars,
       'name': name,
       'strength': strength,
+    }, SetOptions(merge: true));
+  }
+
+  Future initializeUserData() async {
+    return await brewCollection.doc(uid).set({
+      'sugars': '0',
+      'name': 'new member',
+      'strength': 100,
+      'gender': '',
+      'dob': '',
+    }, SetOptions(merge: true));
+  }
+
+
+  Future updateUserProfile(String gender, String dob) async {
+    return await brewCollection.doc(uid).update({
+      'gender': gender,
+      'dob': dob,
     });
   }
 
@@ -23,6 +41,18 @@ class DatabaseService {
     DocumentSnapshot snapshot = await brewCollection.doc(uid).get();
     return snapshot.exists;
   }
+
+  // Future<bool> checkUserProfileInit() async {
+  //   DocumentSnapshot snapshot = await brewCollection.doc(uid).get();
+  //   if (snapshot['gender']!='' && snapshot['dob']!='') {
+  //
+  //     return true;
+  //   } else {
+  //
+  //     return false;
+  //   }
+  //
+  // }
 
   // brew list from snapshot
   List<Brew> _brewListFromSnapshot(QuerySnapshot snapshot) {
@@ -47,6 +77,8 @@ class DatabaseService {
       name: snapshot['name'] ?? '',
       sugars: snapshot['sugars'] ?? '0',
       strength: snapshot['strength'] ?? 0,
+      gender: snapshot['gender'] ?? '',
+      dob: snapshot['dob'] ?? '',
     );
   }
 

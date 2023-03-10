@@ -2,6 +2,7 @@ import 'package:audioapp/services/auth.dart';
 import 'package:audioapp/shared/loading.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/appUser.dart';
 import '../../shared/constants.dart';
 
 class Register extends StatefulWidget {
@@ -80,7 +81,7 @@ class _RegisterState extends State<Register> {
                           setState(() {
                             loading = true;
                           });
-                          dynamic result = await _auth.registerWithEmailAndPassword(
+                          AppUser? result = await _auth.registerWithEmailAndPassword(
                               email, password);
                           setState(() => loading = false);
                           if (result == null) {
@@ -88,6 +89,9 @@ class _RegisterState extends State<Register> {
                               error = 'Registration Error!';
                             });
                           } else {
+                            setState(() {
+                              error = 'Registration Successful!';
+                            });
                             debugPrint('registered');
                           }
                         }

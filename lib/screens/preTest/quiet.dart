@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class Quiet extends StatelessWidget {
-  const Quiet({Key? key}) : super(key: key);
+  final String test;
+  const Quiet({Key? key,required this.test}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +39,14 @@ class Quiet extends StatelessWidget {
 
           ElevatedButton(
                 child: const Padding(
-                  padding: EdgeInsets.all(15.0),
+                  padding: EdgeInsets.all(20.0),
                   child: Text(
                     'Next',
                     style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                   ),
                 ),
                 onPressed: () {
+                  // debugPrint(test);
                   GoRouter.of(context).go('/home');
                   // Navigator.push(
                   //   context,

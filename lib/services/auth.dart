@@ -53,7 +53,7 @@ class AuthService {
       bool userExists = await DatabaseService(uid: user!.uid).checkUserExists();
 
       if (!userExists) {
-        await DatabaseService(uid: user.uid).updateUserData('0', 'new crew member', 100);
+        await DatabaseService(uid: user.uid).initializeUserData();
       }
       return _appUserFromFirebaseUser(user);
     } catch (e) {
@@ -75,11 +75,11 @@ class AuthService {
   }
 
   // register with email and password
-  Future registerWithEmailAndPassword(String email, String password) async {
+  Future<AppUser?> registerWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
-      await DatabaseService(uid: user!.uid).updateUserData('0', 'new crew member', 100);
+      await DatabaseService(uid: user!.uid).initializeUserData();
       return _appUserFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
@@ -91,6 +91,7 @@ class AuthService {
 
   Future signOut() async {
     try {
+      GoogleSignIn().signOut();
       return await _auth.signOut();
     } catch (e) {
       print(e.toString());

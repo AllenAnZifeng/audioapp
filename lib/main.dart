@@ -37,10 +37,7 @@ class MyApp extends StatelessWidget {
         path: "/authenticate",
         builder: (context, state) => const Authenticate(),
       ),
-      GoRoute(
-        path: "/preTestHeadPhone",
-        builder: (context, state) => const HeadPhone(),
-      )
+
     ],
   );
 
