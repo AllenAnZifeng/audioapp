@@ -88,42 +88,90 @@ class _ProfileInitState extends State<ProfileInit> {
             'Complete Profile',
             style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
           )),
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
 
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 20.0, width: double.infinity),
-          const Text(
-            'Select Date of Birth',
-            style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 40.0, width: double.infinity),
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20.0, width: double.infinity),
+            const Text(
+              'Select Date of Birth',
+              style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 40.0, width: double.infinity),
 
-          Padding(
-            padding: const EdgeInsets.all(28.0),
-            child: _DatePickerItem(
-              children: <Widget>[
-                const Text('Date',style: TextStyle(fontSize: 22.0) ,),
-                CupertinoButton(
-                  // Display a CupertinoDatePicker in date picker mode.
-                  onPressed: () => _showDialog(
-                    CupertinoDatePicker(
-                      initialDateTime: date,
-                      mode: CupertinoDatePickerMode.date,
-                      maximumDate: DateTime.now(),
-                      use24hFormat: true,
-                      // This is called when the user changes the date.
-                      onDateTimeChanged: (DateTime newDate) {
-                        setState(() => date = newDate);
-                      },
+            Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: _DatePickerItem(
+                children: <Widget>[
+                  const Text('Date',style: TextStyle(fontSize: 22.0) ,),
+                  CupertinoButton(
+                    // Display a CupertinoDatePicker in date picker mode.
+                    onPressed: () => _showDialog(
+                      CupertinoDatePicker(
+                        initialDateTime: date,
+                        mode: CupertinoDatePickerMode.date,
+                        maximumDate: DateTime.now(),
+                        use24hFormat: true,
+                        // This is called when the user changes the date.
+                        onDateTimeChanged: (DateTime newDate) {
+                          setState(() => date = newDate);
+                        },
+                      ),
+                    ),
+                    // In this example, the date is formatted manually. You can
+                    // use the intl package to format the value based on the
+                    // user's locale settings.
+                    child: Text(
+                      '${date.month}-${date.day}-${date.year}',
+                      style: const TextStyle(
+                        fontSize: 22.0,
+                      ),
                     ),
                   ),
-                  // In this example, the date is formatted manually. You can
-                  // use the intl package to format the value based on the
-                  // user's locale settings.
+                ],
+              ),
+            ),
+            const SizedBox(height: 40.0, width: double.infinity),
+            const Text(
+              'Select Gender',
+              style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 40.0, width: double.infinity),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('Gender: ',style: const TextStyle(
+                  fontSize: 22.0,)),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  // Display a CupertinoPicker with list of fruits.
+                  onPressed: () => _showDialog(
+                    CupertinoPicker(
+                      magnification: 1.22,
+                      squeeze: 1.2,
+                      useMagnifier: true,
+                      itemExtent: 45,
+                      // This is called when selected item is changed.
+                      onSelectedItemChanged: (int selectedItem) {
+                        setState(() {
+                            gender = selectedItem;
+                        });
+                      },
+                      children:
+                      List<Widget>.generate(_genders.length, (int index) {
+                        return Center(
+                          child: Text(
+                            _genders[index],
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                  // This displays the selected fruit name.
                   child: Text(
-                    '${date.month}-${date.day}-${date.year}',
+                    _genders[gender],
                     style: const TextStyle(
                       fontSize: 22.0,
                     ),
@@ -131,77 +179,32 @@ class _ProfileInitState extends State<ProfileInit> {
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 40.0, width: double.infinity),
-          const Text(
-            'Select Gender',
-            style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 40.0, width: double.infinity),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('Gender: ',style: const TextStyle(
-                fontSize: 22.0,)),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                // Display a CupertinoPicker with list of fruits.
-                onPressed: () => _showDialog(
-                  CupertinoPicker(
-                    magnification: 1.22,
-                    squeeze: 1.2,
-                    useMagnifier: true,
-                    itemExtent: 45,
-                    // This is called when selected item is changed.
-                    onSelectedItemChanged: (int selectedItem) {
-                      setState(() {
-                          gender = selectedItem;
-                      });
-                    },
-                    children:
-                    List<Widget>.generate(_genders.length, (int index) {
-                      return Center(
-                        child: Text(
-                          _genders[index],
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-                // This displays the selected fruit name.
+
+            const SizedBox(height:120.0, width: double.infinity),
+            ElevatedButton(
+              child: const Padding(
+                padding: EdgeInsets.all(20.0),
                 child: Text(
-                  _genders[gender],
-                  style: const TextStyle(
-                    fontSize: 22.0,
-                  ),
+                  'Next',
+                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
               ),
-            ],
-          ),
+              onPressed: () async {
+                final appUser = Provider.of<AppUser?>(context,listen: false);
 
-          const SizedBox(height:120.0, width: double.infinity),
-          ElevatedButton(
-            child: const Padding(
-              padding: EdgeInsets.all(20.0),
-              child: Text(
-                'Next',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
+                final String formatted_date = '${date.month}-${date.day}-${date.year}';
+                await DatabaseService(uid: appUser!.uid).updateUserProfile(
+                  _genders[gender], formatted_date
+                );
+
+
+              },
             ),
-            onPressed: () async {
-              final appUser = Provider.of<AppUser?>(context,listen: false);
-
-              final String formatted_date = '${date.month}-${date.day}-${date.year}';
-              await DatabaseService(uid: appUser!.uid).updateUserProfile(
-                _genders[gender], formatted_date
-              );
+            const SizedBox(height: 20.0, width: double.infinity),
 
 
-            },
-          ),
-
-
-        ],
+          ],
+        ),
       ),
     );
   }

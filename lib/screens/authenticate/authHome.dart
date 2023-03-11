@@ -27,59 +27,60 @@ class AuthHome extends StatelessWidget {
           )),
         ),
       ),
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 20.0),
+            Container(
+                child: Image.asset(
+              'assets/home_pic.png',
+              width: 300,
+              height: 300,
+            )),
+            const SizedBox(height: 20.0),
+            Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                height: 100,
+                child: ElevatedButton(
+                  child: const Text(
+                    'Sign in with Hearing Pro',
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () {
+                    // GoRouter.of(context).go('/authenticate');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Authenticate()),
+                    );
+                  },
+                )),
+            Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                height: 100,
+                child: ElevatedButton(
+                  child: const Text(
+                    'Sign in with Google',
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () async {
+                    final AuthService _auth = AuthService();
+                    AppUser? result = await _auth.signInWithGoogle();
+                    if (result == null) {
+                      debugPrint('error signing in');
+                    } else {
+                      debugPrint('signed in');
+                      debugPrint(result.uid);
 
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 20.0),
-          Container(
-              child: Image.asset(
-            'assets/home_pic.png',
-            width: 300,
-            height: 300,
-          )),
-          const SizedBox(height: 20.0),
-          Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-              height: 100,
-              child: ElevatedButton(
-                child: const Text(
-                  'Sign in with Hearing Pro',
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () {
-                  // GoRouter.of(context).go('/authenticate');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Authenticate()),
-                  );
-                },
-              )),
-          Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-              height: 100,
-              child: ElevatedButton(
-                child: const Text(
-                  'Sign in with Google',
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () async {
-                  final AuthService _auth = AuthService();
-                  AppUser? result = await _auth.signInWithGoogle();
-                  if (result == null) {
-                    debugPrint('error signing in');
-                  } else {
-                    debugPrint('signed in');
-                    debugPrint(result.uid);
+                    }
+                  },
+                )),
 
-                  }
-                },
-              )),
-
-        ],
+          ],
+        ),
       ),
     );
   }

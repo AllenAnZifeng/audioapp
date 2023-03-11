@@ -32,29 +32,7 @@ class Wrapper extends StatelessWidget {
            } else {
              return ProfileInit();
            }
-          } else if (snapshot.hasError) {
-            print('error');
-            print(snapshot.error);
-            List<Widget> children = <Widget>[
-              const Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: 60,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Text('Error: ${snapshot.error}'),
-              ),
-            ];
-
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: children,
-              ),
-            );
-            // return AuthHome();
-          } else {
+          }  else {
             return Loading();
           }
 

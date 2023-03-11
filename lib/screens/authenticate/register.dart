@@ -44,68 +44,70 @@ class _RegisterState extends State<Register> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-              child: Form(
-                key: _formkey,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20.0),
-                    TextFormField(
-                      onChanged: (val) {
-                        setState(() => email = val);
-                      },
-                      validator: (val) =>
-                          val!.isEmpty ? 'Enter an email' : null,
-                      decoration: textInputDecoration.copyWith(hintText: 'Email'),
-                    ),
-                    const SizedBox(height: 20.0),
-                    TextFormField(
-                      onChanged: (val) {
-                        setState(() => password = val);
-                      },
-                      validator: (val) => val!.length < 6
-                          ? 'Enter a password 6+ chars long'
-                          : null,
-                      decoration: textInputDecoration.copyWith(hintText: 'Password'),
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 20.0),
-                    ElevatedButton(
-                      child: const Text('Sign up with Email and Password'),
-                      onPressed: () async {
-                        if (_formkey.currentState!.validate()) {
-                          setState(() {
-                            loading = true;
-                          });
-                          AppUser? result = await _auth.registerWithEmailAndPassword(
-                              email, password);
-                          setState(() => loading = false);
-                          if (result == null) {
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                child: Form(
+                  key: _formkey,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20.0),
+                      TextFormField(
+                        onChanged: (val) {
+                          setState(() => email = val);
+                        },
+                        validator: (val) =>
+                            val!.isEmpty ? 'Enter an email' : null,
+                        decoration: textInputDecoration.copyWith(hintText: 'Email'),
+                      ),
+                      const SizedBox(height: 20.0),
+                      TextFormField(
+                        onChanged: (val) {
+                          setState(() => password = val);
+                        },
+                        validator: (val) => val!.length < 6
+                            ? 'Enter a password 6+ chars long'
+                            : null,
+                        decoration: textInputDecoration.copyWith(hintText: 'Password'),
+                        obscureText: true,
+                      ),
+                      const SizedBox(height: 20.0),
+                      ElevatedButton(
+                        child: const Text('Sign up with Email and Password'),
+                        onPressed: () async {
+                          if (_formkey.currentState!.validate()) {
                             setState(() {
-                              error = 'Registration Error!';
+                              loading = true;
                             });
-                          } else {
-                            setState(() {
-                              error = 'Registration Successful!';
-                            });
-                            debugPrint('registered');
+                            AppUser? result = await _auth.registerWithEmailAndPassword(
+                                email, password);
+                            setState(() => loading = false);
+                            if (result == null) {
+                              setState(() {
+                                error = 'Registration Error!';
+                              });
+                            } else {
+                              setState(() {
+                                error = 'Registration Successful!';
+                              });
+                              debugPrint('registered');
+                            }
                           }
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 12.0),
-                    Text(
-                      error,
-                      style: const TextStyle(color: Colors.red, fontSize: 14.0),
-                    )
-                  ],
-                ),
-              ))
-        ],
+                        },
+                      ),
+                      const SizedBox(height: 12.0),
+                      Text(
+                        error,
+                        style: const TextStyle(color: Colors.red, fontSize: 14.0),
+                      )
+                    ],
+                  ),
+                ))
+          ],
+        ),
       ),
     );
   }
