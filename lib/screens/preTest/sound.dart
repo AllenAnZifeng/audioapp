@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:audioapp/screens/test1/practice1.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:perfect_volume_control/perfect_volume_control.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'dart:typed_data';
+
 
 class Sound extends StatefulWidget {
   final String test;
@@ -27,8 +29,9 @@ class _SoundState extends State<Sound> {
     PerfectVolumeControl.hideUI = false;
 
     PerfectVolumeControl.getVolume().then((volume) {
+
       setState(() {
-        _value = volume/100;
+        _value = volume;
       });
     });
 
@@ -114,13 +117,24 @@ class _SoundState extends State<Sound> {
                       ),
                     ),
                     onPressed: () {
-                      // debugPrint(test);
-                      GoRouter.of(context).go('/home');
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //       builder: (context) => const Authenticate()),
-                      // );
+                      if (widget.test == 'test1'){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Practice1()),
+                        );
+                      }
+                      else if (widget.test == 'test2'){
+                        GoRouter.of(context).go('/test2');
+                      }
+                      else if (widget.test == 'test3'){
+                        GoRouter.of(context).go('/test3');
+                      }
+                      else{
+                        debugPrint('test error! Going to /');
+                        GoRouter.of(context).go('/');
+                      }
+
                     },
                   ),
               const SizedBox(height: 20.0, width: double.infinity),
