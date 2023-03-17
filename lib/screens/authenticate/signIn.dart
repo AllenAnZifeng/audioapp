@@ -30,11 +30,13 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return loading ? Loading() : Scaffold(
-      backgroundColor: Colors.brown[100],
+      backgroundColor: Colors.purple[100],
       appBar: AppBar(
-        backgroundColor: Colors.brown[400],
+        backgroundColor: Colors.purple[600],
+        scrolledUnderElevation: 4.0,
         elevation: 0.0,
-        title: const Text('Sign in to AudioApp'),
+        title: const Text('Sign In', style: TextStyle(
+            color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),),
         actions: [
           TextButton.icon(
             onPressed: () {
@@ -50,21 +52,21 @@ class _SignInState extends State<SignIn> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-              child: ElevatedButton(
-                child: const Text('Guest Sign in'),
-                onPressed: () async {
-                  AppUser? result = await _auth.signInAnonymously();
-                  if (result == null) {
-                    debugPrint('error signing in');
-                  } else {
-                    debugPrint('signed in');
-                    debugPrint(result.uid);
-                  }
-                },
-              )
-            ),
+            // Container(
+            //   padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+            //   child: ElevatedButton(
+            //     child: const Text('Guest Sign in'),
+            //     onPressed: () async {
+            //       AppUser? result = await _auth.signInAnonymously();
+            //       if (result == null) {
+            //         debugPrint('error signing in');
+            //       } else {
+            //         debugPrint('signed in');
+            //         debugPrint(result.uid);
+            //       }
+            //     },
+            //   )
+            // ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
               child: Form(

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:go_router/go_router.dart';
 import 'package:perfect_volume_control/perfect_volume_control.dart';
+import 'package:audioapp/services/database.dart';
+import 'package:provider/provider.dart';
+
+import '../../models/appUser.dart';
 
 class Test1 extends StatefulWidget {
   const Test1({Key? key}) : super(key: key);
@@ -26,11 +30,11 @@ class _Test1State extends State<Test1> {
   int ear = 0;
 
   // left ear 0, right ear 1
-  Map<String, List<double>> data = {
-    '500': [0, 0],
-    '1000': [0, 0],
-    '2000': [0, 0],
-    '3000': [0, 0],
+  Map<String, dynamic> data = {
+    '500': [0.2, 0],
+    '1000': [0.1, 0],
+    '2000': [0.3, 0],
+    '3000': [0.4, 0],
     '4000': [0, 0],
     '6000': [0, 0],
     '8000': [0, 0]
@@ -91,41 +95,48 @@ class _Test1State extends State<Test1> {
 
   startPractice() async {
     // List<int> frequencies = [500, 1000, 2000, 3000, 4000, 6000, 8000];
-    List<int> frequencies = [500, 1000];
-    List<double> vols = [0.02, 0.03, 0.04];
-    for (int i = 0; i < frequencies.length; i++) {
-      print('frequency ${frequencies[i]}');
-      setState(() {
-        progress = i / frequencies.length;
-      });
-      for (int j = 0; j < vols.length; j++) {
-        if (!mounted) {
-          return;
-        }
-        if (heard) {
-          print('breaking');
-          break;
-        } else {
-          print('beep -> frequency: ${frequencies[i]}, vol: ${vols[j]}');
-          await beep(frequencies[i], vols[j]);
-          await Future.delayed(const Duration(milliseconds: 3000));
-        }
-      }
-      setState(() {
-        heard = false;
-      });
-    }
 
-    setState(() {
-      buttonState = 'End';
-    });
+    // List<int> frequencies = [500, 1000];
+    // List<double> vols = [0.02, 0.03, 0.04];
+    // for (int i = 0; i < frequencies.length; i++) {
+    //   print('frequency ${frequencies[i]}');
+    //   setState(() {
+    //     progress = i / frequencies.length;
+    //   });
+    //   for (int j = 0; j < vols.length; j++) {
+    //     if (!mounted) {
+    //       return;
+    //     }
+    //     if (heard) {
+    //       print('breaking');
+    //       break;
+    //     } else {
+    //       print('beep -> frequency: ${frequencies[i]}, vol: ${vols[j]}');
+    //       await beep(frequencies[i], vols[j]);
+    //       await Future.delayed(const Duration(milliseconds: 1000));
+    //     }
+    //   }
+    //   setState(() {
+    //     heard = false;
+    //   });
+    // }
+    //
+    // setState(() {
+    //   buttonState = 'End';
+    // });
     print('end');
-    submitData();
+    var val = await submitData();
+    print('val: $val');
     await _endDialogBuilder(context);
   }
 
-  submitData(){
+  submitData() async {
+    setState(() {
+      data['time'] = DateTime.now().millisecondsSinceEpoch.toString();
+    });
     print(data);
+    final appUser = Provider.of<AppUser?>(context,listen: false);
+    await  DatabaseService(uid: appUser!.uid).updateUserAudioData('test1',data);
   }
 
   bool clickHandler() {
@@ -162,7 +173,7 @@ class _Test1State extends State<Test1> {
               ),
               child: const Text('Next'),
               onPressed: () {
-                // go to result
+                GoRouter.of(context).pushNamed('/profile');
               },
             )
           ],

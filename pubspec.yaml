@@ -52,6 +52,7 @@ dependencies:
   sound_generator: ^0.0.9
   js: ^0.6.5
   flutter_js: ^0.6.0
+  fl_chart: ^0.61.0
 
 dev_dependencies:
   flutter_test:

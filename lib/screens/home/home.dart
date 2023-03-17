@@ -10,6 +10,7 @@ import 'package:audioapp/screens/home/brew_list.dart';
 import 'package:audioapp/models/brew.dart';
 
 import '../../models/appUser.dart';
+import '../authenticate/authHome.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -35,6 +36,9 @@ class _HomeState extends State<Home> {
     }
 
     final appUser = Provider.of<AppUser?>(context);
+    if (appUser == null) {
+      return  const AuthHome();
+    }
 
     tapHandler(String test) {
       debugPrint('tapped');
@@ -50,6 +54,7 @@ class _HomeState extends State<Home> {
     return StreamProvider<List<Brew>?>.value(
       value: DatabaseService(uid: appUser!.uid).getBrews,
       initialData: null,
+
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -65,9 +70,9 @@ class _HomeState extends State<Home> {
               onPressed: () async {
                 await _auth.signOut();
               },
-              icon: const Icon(
+              icon: Icon(
                 Icons.logout,
-                color: Colors.black,
+                color: Colors.pink[50],
               ),
               label: const Text('logout',
                   style: TextStyle(
@@ -78,10 +83,12 @@ class _HomeState extends State<Home> {
               ),
             ),
             TextButton.icon(
-              onPressed: () => _showSettingsPanel(),
-              icon: const Icon(
+              onPressed: () => {
+                GoRouter.of(context).go('/profile'),
+              },
+              icon: Icon(
                 Icons.person,
-                color: Colors.black,
+                color: Colors.pink[50],
               ),
               label: const Padding(
                 padding: EdgeInsets.only(right:8.0),

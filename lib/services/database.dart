@@ -26,6 +26,19 @@ class DatabaseService {
       'strength': 100,
       'gender': '',
       'dob': '',
+      'data': {
+        'test1':[],
+        'test2':[],
+        'test3':[],
+      }
+    }, SetOptions(merge: true));
+  }
+
+  Future updateUserAudioData(String test, Map<String, dynamic> data) async {
+    return await brewCollection.doc(uid).set({
+      'data': {
+        test: FieldValue.arrayUnion([data]),
+      }
     }, SetOptions(merge: true));
   }
 
@@ -65,6 +78,7 @@ class DatabaseService {
     }).toList();
   }
 
+
   Stream<List<Brew>> get getBrews {
 
     return brewCollection.snapshots().map(_brewListFromSnapshot);
@@ -79,6 +93,7 @@ class DatabaseService {
       strength: snapshot['strength'] ?? 0,
       gender: snapshot['gender'] ?? '',
       dob: snapshot['dob'] ?? '',
+      data: snapshot['data'] ?? '',
     );
   }
 

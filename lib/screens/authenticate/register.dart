@@ -26,11 +26,13 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return loading? Loading() : Scaffold(
-      backgroundColor: Colors.brown[100],
+      backgroundColor: Colors.purple[100],
       appBar: AppBar(
-        backgroundColor: Colors.brown[400],
+        backgroundColor: Colors.purple[600],
+        scrolledUnderElevation: 4.0,
         elevation: 0.0,
-        title: const Text('Sign up to AudioApp'),
+        title: const Text('Sign Up', style: TextStyle(
+            color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),),
         actions: [
           TextButton.icon(
             onPressed: () {
