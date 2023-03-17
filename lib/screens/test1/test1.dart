@@ -19,9 +19,23 @@ class _Test1State extends State<Test1> {
   };
   bool playing = false;
   bool heard = false;
+  bool pause = false;
   double vol = 0;
   int frequency = 0;
-  double progress = 0.3;
+  double progress = 0;
+  int ear = 0;
+
+  // left ear 0, right ear 1
+  Map<String, List<double>> data = {
+    '500': [0, 0],
+    '1000': [0, 0],
+    '2000': [0, 0],
+    '3000': [0, 0],
+    '4000': [0, 0],
+    '6000': [0, 0],
+    '8000': [0, 0]
+  };
+
   final player = AudioPlayer();
 
   @override
@@ -44,7 +58,6 @@ class _Test1State extends State<Test1> {
     super.dispose();
     print('stop');
     player.dispose();
-
   }
 
   beep(int f, double v) async {
@@ -55,8 +68,11 @@ class _Test1State extends State<Test1> {
     });
     PerfectVolumeControl.setVolume(v);
     for (int i = 0; i < 3; i++) {
-      print('mounted $mounted');
       if (mounted) {
+        while (pause) {
+          print('paused');
+          await Future.delayed(const Duration(milliseconds: 500));
+        }
 
         await player.play(AssetSource("audio/$f.wav"));
         await player.seek(const Duration(milliseconds: 500));
@@ -74,12 +90,16 @@ class _Test1State extends State<Test1> {
   }
 
   startPractice() async {
-    List<int> frequencies = [500, 1000, 2000, 3000, 4000, 6000, 8000];
+    // List<int> frequencies = [500, 1000, 2000, 3000, 4000, 6000, 8000];
+    List<int> frequencies = [500, 1000];
     List<double> vols = [0.02, 0.03, 0.04];
     for (int i = 0; i < frequencies.length; i++) {
       print('frequency ${frequencies[i]}');
+      setState(() {
+        progress = i / frequencies.length;
+      });
       for (int j = 0; j < vols.length; j++) {
-        if ( !mounted) {
+        if (!mounted) {
           return;
         }
         if (heard) {
@@ -99,6 +119,13 @@ class _Test1State extends State<Test1> {
     setState(() {
       buttonState = 'End';
     });
+    print('end');
+    submitData();
+    await _endDialogBuilder(context);
+  }
+
+  submitData(){
+    print(data);
   }
 
   bool clickHandler() {
@@ -107,6 +134,10 @@ class _Test1State extends State<Test1> {
         heard = true;
       });
       print('heard-> vol: $vol, frequency: $frequency');
+
+      setState(() {
+        data['$frequency']![ear] = vol;
+      });
       return true;
     } else {
       setState(() {
@@ -117,7 +148,30 @@ class _Test1State extends State<Test1> {
     }
   }
 
-  Future<void> _dialogBuilder(BuildContext context) {
+  Future<void> _endDialogBuilder(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Congrats!'),
+          content: const Text('You have successfully completed the test.'),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Next'),
+              onPressed: () {
+                // go to result
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _cancelDialogBuilder(BuildContext context) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -131,6 +185,10 @@ class _Test1State extends State<Test1> {
               ),
               child: const Text('Resume'),
               onPressed: () {
+                setState(() {
+                  pause = false;
+                });
+
                 Navigator.of(context).pop();
               },
             ),
@@ -140,6 +198,9 @@ class _Test1State extends State<Test1> {
               ),
               child: const Text('Stop'),
               onPressed: () {
+                setState(() {
+                  pause = false;
+                });
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
@@ -163,20 +224,24 @@ class _Test1State extends State<Test1> {
         elevation: 0,
         title: const Text(
           'Test',
-          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+
+          style: TextStyle(color: Colors.white,fontSize: 20.0 ,fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[
           TextButton.icon(
             onPressed: () async {
-              await _dialogBuilder(context);
+              setState(() {
+                pause = true;
+              });
+              await _cancelDialogBuilder(context);
             },
             icon: const Icon(
-              Icons.cancel_outlined,
+              Icons.pause,
               color: Colors.black,
             ),
             label: const Padding(
               padding: EdgeInsets.only(right: 8.0),
-              child: Text('Cancel',
+              child: Text('Pause',
                   style: TextStyle(
                     fontSize: 18.0,
                   )),
@@ -198,12 +263,20 @@ class _Test1State extends State<Test1> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                      LinearProgressIndicator(
-                      value: progress,
+                  TweenAnimationBuilder<double>(
+                    duration: const Duration(milliseconds: 1000),
+                    curve: Curves.easeInOut,
+                    tween: Tween<double>(
+                      begin: 0,
+                      end: progress,
+                    ),
+                    builder: (BuildContext context, double value, _) =>
+                        LinearProgressIndicator(
+                      value: value,
                       minHeight: 10.0,
                       semanticsLabel: 'Linear progress indicator',
                     ),
-
+                  ),
                   const Padding(
                     padding: EdgeInsets.all(20.0),
                     child: Text(
@@ -212,7 +285,6 @@ class _Test1State extends State<Test1> {
                       style: TextStyle(fontSize: 24.0),
                     ),
                   ),
-
                   const Padding(
                     padding: EdgeInsets.all(20.0),
                     child: Text(
@@ -221,14 +293,14 @@ class _Test1State extends State<Test1> {
                       style: TextStyle(fontSize: 24.0),
                     ),
                   ),
-
                   const SizedBox(height: 20.0, width: double.infinity),
                   ElevatedButton(
                     child: Padding(
                       padding: EdgeInsets.all(20.0),
                       child: Text(
                         textDict[buttonState]!,
-                        style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 24.0, fontWeight: FontWeight.bold),
                       ),
                     ),
                     onPressed: () {
@@ -239,9 +311,9 @@ class _Test1State extends State<Test1> {
                         startPractice();
                       } else if (buttonState == 'InTest') {
                         String msg = '';
-                        if(clickHandler()){
+                        if (clickHandler()) {
                           msg = 'Nice Catch!';
-                        }else{
+                        } else {
                           msg = 'You missed it!';
                         }
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -254,9 +326,11 @@ class _Test1State extends State<Test1> {
                             ),
                             content: Text(msg),
                             duration: const Duration(milliseconds: 200),
-                            width: 280.0, // Width of the SnackBar.
+                            width: 280.0,
+                            // Width of the SnackBar.
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, // Inner padding for SnackBar content.
+                              horizontal:
+                                  8.0, // Inner padding for SnackBar content.
                             ),
                             behavior: SnackBarBehavior.floating,
                             shape: RoundedRectangleBorder(
@@ -264,10 +338,7 @@ class _Test1State extends State<Test1> {
                             ),
                           ),
                         );
-
-
-                      }
-                      else if (buttonState=='End'){
+                      } else if (buttonState == 'End') {
                         print('end');
                       }
                     },
@@ -278,7 +349,6 @@ class _Test1State extends State<Test1> {
             ),
           );
         },
-
       ),
     );
   }

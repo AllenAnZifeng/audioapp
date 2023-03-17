@@ -86,7 +86,7 @@ class _ProfileInitState extends State<ProfileInit> {
           elevation: 0,
           title: const Text(
             'Complete Profile',
-            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white,fontSize: 20.0, fontWeight: FontWeight.bold),
           )),
       body: SingleChildScrollView(
         child: Column(

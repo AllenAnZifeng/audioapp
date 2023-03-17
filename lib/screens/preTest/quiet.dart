@@ -16,7 +16,7 @@ class Quiet extends StatelessWidget {
         elevation: 0,
         title: const Text(
         'Pre Test Check',
-        style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+        style: TextStyle(color: Colors.white,fontSize: 20.0, fontWeight: FontWeight.bold),
     )),
       body: SingleChildScrollView(
         child: Column(

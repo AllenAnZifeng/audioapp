@@ -79,7 +79,7 @@ class _Practice1State extends State<Practice1> {
           elevation: 0,
           title: const Text(
             'Practice Test',
-            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white,fontSize: 20.0, fontWeight: FontWeight.bold),
           )),
       body: SingleChildScrollView(
         child: Column(

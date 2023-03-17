@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
           elevation: 0,
           title: const Text(
             'Home',
-            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white,fontSize: 20.0, fontWeight: FontWeight.bold),
           ),
           actions: <Widget>[
             TextButton.icon(
