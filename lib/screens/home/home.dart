@@ -83,10 +83,13 @@ class _HomeState extends State<Home> {
                 Icons.person,
                 color: Colors.black,
               ),
-              label: const Text('Profile',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                  )),
+              label: const Padding(
+                padding: EdgeInsets.only(right:8.0),
+                child: Text('Profile',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                    )),
+              ),
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
               ),

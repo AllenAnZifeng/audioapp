@@ -1,10 +1,8 @@
+import 'package:audioapp/screens/test1/test1.dart';
 import 'package:flutter/services.dart';
-
 import 'package:audioplayers/audioplayers.dart';
-import 'package:perfect_volume_control/perfect_volume_control.dart';
-import 'package:sound_generator/sound_generator.dart';
 import 'package:flutter/material.dart';
-import 'package:sound_generator/waveTypes.dart';
+
 
 class Practice1 extends StatefulWidget {
   const Practice1({Key? key}) : super(key: key);
@@ -14,7 +12,8 @@ class Practice1 extends StatefulWidget {
 }
 
 class _Practice1State extends State<Practice1> {
-  String buttonState = 'Start';
+  // String buttonState = 'Start';
+  String buttonState = 'End';
   Map<String, String> textDict = {
     'Start': 'Start Practice',
     'InTest': 'I heard it!',
@@ -23,17 +22,11 @@ class _Practice1State extends State<Practice1> {
   bool playing = false;
   final player = AudioPlayer();
 
-  // void initState() {
-  //
-  //   // PerfectVolumeControl.setVolume(0.5);
-  // }
-  //
-  // void dispose() {
-  //   super.dispose();
-  //   SoundGenerator.release();
-  // }
-
-
+  @override
+  dispose() {
+    super.dispose();
+    player.stop();
+  }
 
   beep(int frequency) async{
     setState(() {
@@ -43,7 +36,7 @@ class _Practice1State extends State<Practice1> {
     for (int i = 0; i < 3; i++) {
       await player.play(AssetSource("audio/$frequency.wav"));
       await player.seek(const Duration(milliseconds: 500));
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 200));
       await player.stop();
       await Future.delayed(const Duration(milliseconds: 500));
     }
@@ -148,8 +141,6 @@ class _Practice1State extends State<Practice1> {
                   String msg = '';
                   if(clickHandler()){
                     msg = 'Nice Catch!';
-
-
                   }else{
                     msg = 'You missed it!';
                   }
@@ -162,7 +153,7 @@ class _Practice1State extends State<Practice1> {
                         },
                       ),
                       content: Text(msg),
-                      duration: const Duration(milliseconds: 250),
+                      duration: const Duration(milliseconds: 200),
                       width: 280.0, // Width of the SnackBar.
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, // Inner padding for SnackBar content.
@@ -177,7 +168,12 @@ class _Practice1State extends State<Practice1> {
 
                 }
                 else if (buttonState=='End'){
-                  print('end');
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Test1()),
+                  );
                 }
               },
             ),

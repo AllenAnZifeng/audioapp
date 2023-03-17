@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:audioapp/models/appUser.dart';
 
+import '../services/auth.dart';
 import '../services/database.dart';
 import '../shared/loading.dart';
 import 'authenticate/authHome.dart';
@@ -33,6 +34,7 @@ class Wrapper extends StatelessWidget {
              return ProfileInit();
            }
           }  else {
+
             return Loading();
           }
 

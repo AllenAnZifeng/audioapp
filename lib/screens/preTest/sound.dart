@@ -23,6 +23,14 @@ class _SoundState extends State<Sound> {
   double _value = 0.5;
 
   final player = AudioPlayer();
+
+
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
+  }
+
   @override
   void initState() {
 
