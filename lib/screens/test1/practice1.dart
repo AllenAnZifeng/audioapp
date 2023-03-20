@@ -12,14 +12,15 @@ class Practice1 extends StatefulWidget {
 }
 
 class _Practice1State extends State<Practice1> {
-  // String buttonState = 'Start';
-  String buttonState = 'End';
+  String buttonState = 'Start';
+  // String buttonState = 'End';
   Map<String, String> textDict = {
-    'Start': 'Start Practice',
+    'Start': 'Start',
     'InTest': 'I heard it!',
-    'End': 'Start Test',
+    'End': 'Go to Test',
   };
   bool playing = false;
+  String error ="";
   final player = AudioPlayer();
 
   @override
@@ -54,6 +55,9 @@ class _Practice1State extends State<Practice1> {
     setState(() {
       buttonState = 'End';
     });
+    await _endPracticeDialogBuilder(context);
+
+
   }
 
   bool clickHandler() {
@@ -70,6 +74,43 @@ class _Practice1State extends State<Practice1> {
     }
   }
 
+  Future<void> _endPracticeDialogBuilder(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Congrats!'),
+          content: const Text('You have successfully completed the practice.'),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Go To Test'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Test1()),
+                );
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+
+          ],
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,21 +121,47 @@ class _Practice1State extends State<Practice1> {
           title: const Text(
             'Practice Test',
             style: TextStyle(color: Colors.white,fontSize: 20.0, fontWeight: FontWeight.bold),
-          )),
+          ),
+        actions: <Widget>[
+          TextButton.icon(
+            onPressed: () async {
+              if (buttonState == 'End') {
+                setState(() {
+                  buttonState = 'InTest';
+                });
+                startPractice();
+              }else{
+                setState(() {
+                  error = 'Finish the practice first';
+                });
+              }
+
+            },
+            icon: Icon(
+              Icons.redo,
+              color: Colors.pink[50],
+            ),
+            label: const Padding(
+              padding:  EdgeInsets.only(right:8.0),
+              child: Text('Redo',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  )),
+            ),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+            ),
+          ),
+
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 10.0, width: double.infinity),
-            const Padding(
-              padding: EdgeInsets.all(20.0),
-              child: Text(
-                'Click the button when you hear the beeps.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 24.0),
-              ),
-            ),
+
             const SizedBox(height: 10.0, width: double.infinity),
             const Padding(
               padding: EdgeInsets.all(20.0),
@@ -108,7 +175,7 @@ class _Practice1State extends State<Practice1> {
             const Padding(
               padding: EdgeInsets.all(20.0),
               child: Text(
-                'Only need to click once during the beeps.',
+                'Click the button once during the beeps.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 24.0),
               ),
@@ -138,6 +205,9 @@ class _Practice1State extends State<Practice1> {
                   });
                   startPractice();
                 } else if (buttonState == 'InTest') {
+                  setState(() {
+                    error = '';
+                  });
                   String msg = '';
                   if(clickHandler()){
                     msg = 'Nice Catch!';
@@ -178,6 +248,10 @@ class _Practice1State extends State<Practice1> {
               },
             ),
             const SizedBox(height: 20.0, width: double.infinity),
+            Text(
+              error,
+              style: const TextStyle(color: Colors.red, fontSize: 14.0),
+            )
           ],
         ),
       ),

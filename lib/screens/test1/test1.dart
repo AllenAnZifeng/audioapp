@@ -31,13 +31,13 @@ class _Test1State extends State<Test1> {
 
   // left ear 0, right ear 1
   Map<String, dynamic> data = {
-    '500': [0.2, 0],
-    '1000': [0.1, 0],
-    '2000': [0.3, 0],
-    '3000': [0.4, 0],
-    '4000': [0, 0],
-    '6000': [0, 0],
-    '8000': [0, 0]
+    '500': [0.0, 0.0],
+    '1000': [0.0, 0.0],
+    '2000': [0.0, 0.0],
+    '3000': [0.0, 0.0],
+    '4000': [0.0, 0.0],
+    '6000': [0.0, 0.0],
+    '8000': [0.0, 0.0]
   };
 
   final player = AudioPlayer();
@@ -94,36 +94,36 @@ class _Test1State extends State<Test1> {
   }
 
   startPractice() async {
-    // List<int> frequencies = [500, 1000, 2000, 3000, 4000, 6000, 8000];
+    List<int> frequencies = [500, 1000, 2000, 3000, 4000, 6000, 8000];
 
     // List<int> frequencies = [500, 1000];
-    // List<double> vols = [0.02, 0.03, 0.04];
-    // for (int i = 0; i < frequencies.length; i++) {
-    //   print('frequency ${frequencies[i]}');
-    //   setState(() {
-    //     progress = i / frequencies.length;
-    //   });
-    //   for (int j = 0; j < vols.length; j++) {
-    //     if (!mounted) {
-    //       return;
-    //     }
-    //     if (heard) {
-    //       print('breaking');
-    //       break;
-    //     } else {
-    //       print('beep -> frequency: ${frequencies[i]}, vol: ${vols[j]}');
-    //       await beep(frequencies[i], vols[j]);
-    //       await Future.delayed(const Duration(milliseconds: 1000));
-    //     }
-    //   }
-    //   setState(() {
-    //     heard = false;
-    //   });
-    // }
-    //
-    // setState(() {
-    //   buttonState = 'End';
-    // });
+    List<double> vols = [0.02, 0.03, 0.04];
+    for (int i = 0; i < frequencies.length; i++) {
+      print('frequency ${frequencies[i]}');
+      setState(() {
+        progress = i / frequencies.length;
+      });
+      for (int j = 0; j < vols.length; j++) {
+        if (!mounted) {
+          return;
+        }
+        if (heard) {
+          print('breaking');
+          break;
+        } else {
+          print('beep -> frequency: ${frequencies[i]}, vol: ${vols[j]}');
+          await beep(frequencies[i], vols[j]);
+          await Future.delayed(const Duration(milliseconds: 1000));
+        }
+      }
+      setState(() {
+        heard = false;
+      });
+    }
+
+    setState(() {
+      buttonState = 'End';
+    });
     print('end');
     var val = await submitData();
     print('val: $val');
@@ -173,7 +173,7 @@ class _Test1State extends State<Test1> {
               ),
               child: const Text('Next'),
               onPressed: () {
-                GoRouter.of(context).pushNamed('/profile');
+                GoRouter.of(context).go('/profile');
               },
             )
           ],
