@@ -64,7 +64,7 @@ class _Test1State extends State<Test1> {
     player.dispose();
   }
 
-  beep(int f, double v) async {
+  beep(int f, double v, String channel) async {
     setState(() {
       playing = true;
       frequency = f;
@@ -78,7 +78,8 @@ class _Test1State extends State<Test1> {
           await Future.delayed(const Duration(milliseconds: 500));
         }
 
-        await player.play(AssetSource("audio/$f.wav"));
+        await player.play(AssetSource("audio/sine_wave_${frequency}Hz_${channel}_channel.wav"));
+
         await player.seek(const Duration(milliseconds: 500));
         await Future.delayed(const Duration(milliseconds: 200));
         await player.stop();
@@ -94,32 +95,54 @@ class _Test1State extends State<Test1> {
   }
 
   startPractice() async {
-    List<int> frequencies = [500, 1000, 2000, 3000, 4000, 6000, 8000];
+    // List<int> frequencies = [500, 1000, 2000, 3000, 4000, 6000, 8000];
 
-    // List<int> frequencies = [500, 1000];
+    List<int> frequencies = [500, 1000];
     List<double> vols = [0.02, 0.03, 0.04];
-    for (int i = 0; i < frequencies.length; i++) {
-      print('frequency ${frequencies[i]}');
+    List<int> ears = [0, 1];
+
+    for (int k=0; k <ears.length;k++) {
+
       setState(() {
-        progress = i / frequencies.length;
+        ear = ears[k];
       });
-      for (int j = 0; j < vols.length; j++) {
-        if (!mounted) {
-          return;
+
+
+
+      for (int i = 0; i < frequencies.length; i++) {
+        print('frequency ${frequencies[i]}');
+        setState(() {
+          progress = (i+1) / frequencies.length;
+        });
+        for (int j = 0; j < vols.length; j++) {
+          if (!mounted) {
+            return;
+          }
+          if (heard) {
+            print('breaking');
+            break;
+          } else {
+            print('beep -> frequency: ${frequencies[i]}, vol: ${vols[j]}, ear: $ear');
+            if (ear == 0) {
+              await beep(frequencies[i], vols[j], 'left');
+            } else {
+              await beep(frequencies[i], vols[j], 'right');
+            }
+
+            await Future.delayed(const Duration(milliseconds: 1000));
+          }
         }
-        if (heard) {
-          print('breaking');
-          break;
-        } else {
-          print('beep -> frequency: ${frequencies[i]}, vol: ${vols[j]}');
-          await beep(frequencies[i], vols[j]);
-          await Future.delayed(const Duration(milliseconds: 1000));
-        }
+        setState(() {
+          heard = false;
+        });
       }
-      setState(() {
-        heard = false;
-      });
+
+
+
+
     }
+
+
 
     setState(() {
       buttonState = 'End';
@@ -144,7 +167,7 @@ class _Test1State extends State<Test1> {
       setState(() {
         heard = true;
       });
-      print('heard-> vol: $vol, frequency: $frequency');
+      print('heard-> vol: $vol, frequency: $frequency, ear: $ear');
 
       setState(() {
         data['$frequency']![ear] = vol;

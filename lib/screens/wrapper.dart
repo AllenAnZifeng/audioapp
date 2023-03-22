@@ -11,35 +11,47 @@ import '../shared/loading.dart';
 import 'authenticate/authHome.dart';
 
 class Wrapper extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     final appUser = Provider.of<AppUser?>(context);
 
-
     if (appUser == null) {
-
       return AuthHome();
     } else {
-
-      return StreamBuilder<AppUserData>(
-        stream: DatabaseService(uid: appUser.uid).getUserData,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            AppUserData userData = snapshot.data!;
-           if (userData.gender!=''&&userData.dob!=''){
-             return Home();
-           } else {
-             return ProfileInit();
-           }
-          }  else {
-
+      return StreamProvider<AppUserData?>.value(
+        value: DatabaseService(uid: appUser.uid).getUserData,
+        initialData: null,
+        builder: (context, child) {
+          final appUserData = Provider.of<AppUserData?>(context);
+          if (appUserData != null) {
+            if (appUserData.gender != '' && appUserData.dob != '') {
+              return Home();
+            } else {
+              return ProfileInit();
+            }
+          } else {
             return Loading();
           }
-
         },
       );
+
+      // return StreamBuilder<AppUserData>(
+      //   stream: DatabaseService(uid: appUser.uid).getUserData,
+      //   builder: (context, snapshot) {
+      //     if (snapshot.hasData) {
+      //       AppUserData userData = snapshot.data!;
+      //      if (userData.gender!=''&&userData.dob!=''){
+      //        return Home();
+      //      } else {
+      //        return ProfileInit();
+      //      }
+      //     }  else {
+      //
+      //       return Loading();
+      //     }
+      //
+      //   },
+      // );
     }
   }
 }

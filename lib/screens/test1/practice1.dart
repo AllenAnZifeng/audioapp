@@ -12,8 +12,8 @@ class Practice1 extends StatefulWidget {
 }
 
 class _Practice1State extends State<Practice1> {
-  String buttonState = 'Start';
-  // String buttonState = 'End';
+  // String buttonState = 'Start';
+  String buttonState = 'End';
   Map<String, String> textDict = {
     'Start': 'Start',
     'InTest': 'I heard it!',
@@ -29,13 +29,13 @@ class _Practice1State extends State<Practice1> {
     player.stop();
   }
 
-  beep(int frequency) async{
+  beep(int frequency, String channel) async{
     setState(() {
       playing = true;
     });
 
     for (int i = 0; i < 3; i++) {
-      await player.play(AssetSource("audio/$frequency.wav"));
+      await player.play(AssetSource("audio/sine_wave_${frequency}Hz_${channel}_channel.wav"));
       await player.seek(const Duration(milliseconds: 500));
       await Future.delayed(const Duration(milliseconds: 200));
       await player.stop();
@@ -49,9 +49,9 @@ class _Practice1State extends State<Practice1> {
   }
 
   startPractice() async {
-    await beep(500);
+    await beep(500,'left');
     await Future.delayed(const Duration(milliseconds: 3000));
-    await beep(1000);
+    await beep(1000,'right');
     setState(() {
       buttonState = 'End';
     });

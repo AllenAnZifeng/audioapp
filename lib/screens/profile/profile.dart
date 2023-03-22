@@ -17,20 +17,19 @@ class _LineChart extends StatelessWidget {
   const _LineChart({Key? key, required this.data}) : super(key: key);
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(
+    final style = const TextStyle(
       color: Colors.black,
-      // fontWeight: FontWeight.bold,
-
     );
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 10,
       child: Text(meta.formattedValue, style: style),
+
     );
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(
+    final style = const TextStyle(
       color: Colors.black,
     );
     return SideTitleWidget(
@@ -113,6 +112,10 @@ class _LineChart extends StatelessWidget {
           //   FlSpot(5, 10),
           // ], color: Colors.blue[100],),
         ],
+        minX: 0,
+        maxX: 8000,
+        minY: 0,
+        maxY: 0.1,
 
       ),
       swapAnimationDuration: Duration(milliseconds: 150),

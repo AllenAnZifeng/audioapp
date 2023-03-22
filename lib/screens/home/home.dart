@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
     }
 
     return StreamProvider<List<Brew>?>.value(
-      value: DatabaseService(uid: appUser!.uid).getBrews,
+      value: DatabaseService(uid: appUser.uid).getBrews,
       initialData: null,
 
       child: Scaffold(
