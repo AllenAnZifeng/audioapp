@@ -11,8 +11,10 @@ import 'package:audioapp/models/brew.dart';
 
 import '../../models/appUser.dart';
 import '../authenticate/authHome.dart';
+import '../profile/profile.dart';
 
 class Home extends StatefulWidget {
+  // final Function toggleView;
   const Home({Key? key}) : super(key: key);
 
   @override
@@ -25,6 +27,7 @@ class _HomeState extends State<Home> {
 
   String test = "";
 
+
   @override
   Widget build(BuildContext context) {
     void _showSettingsPanel() {
@@ -36,15 +39,21 @@ class _HomeState extends State<Home> {
     }
 
     final appUser = Provider.of<AppUser?>(context);
+    final appUserData = Provider.of<AppUserData?>(context);
+
+    print('Home appUser: $appUser');
+    print('Home appUserData: $appUserData');
+
     if (appUser == null) {
       return  const AuthHome();
     }
+
 
     tapHandler(String test) {
       debugPrint('tapped');
       debugPrint(test);
       setState(() => test = test);
-      // GoRouter.of(context).go('/preTestHeadPhone');
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -84,8 +93,9 @@ class _HomeState extends State<Home> {
             ),
             TextButton.icon(
               onPressed: () => {
-                GoRouter.of(context).go('/profile'),
+                GoRouter.of(context).go('/profile')
               },
+
               icon: Icon(
                 Icons.person,
                 color: Colors.pink[50],

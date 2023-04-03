@@ -7,6 +7,7 @@ import 'package:audioapp/screens/home/home.dart';
 import 'package:audioapp/screens/preTest/headphone.dart';
 import 'package:audioapp/screens/profile/profile.dart';
 import 'package:audioapp/screens/wrapper.dart';
+import 'package:audioapp/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
     routes: [
       GoRoute(
         path: "/",
-        builder: (context, state) =>  Wrapper(),
+        builder: (context, state) => Wrapper(),
       ),
       GoRoute(
         path: "/home",
@@ -38,21 +39,31 @@ class MyApp extends StatelessWidget {
         path: "/profile",
         builder: (context, state) => Profile(),
       ),
-
     ],
   );
 
   @override
   Widget build(BuildContext context) {
-      return StreamProvider<AppUser?>.value(
-        value: AuthService().getUser,
-        initialData: null,
+
+    return MultiProvider(
+        providers: [
+          StreamProvider<AppUser?>.value(
+            value: AuthService().getUser,
+            initialData: null,
+          ),
+          ProxyProvider<AppUser?,DatabaseService>(
+            update: (_, appUser, __) =>  DatabaseService(uid: appUser?.uid ?? ''),
+          ),
+          StreamProvider<AppUserData?>(
+            create: (context) => Provider.of<DatabaseService>(context,listen: false).getUserData,
+            initialData: null,
+          ),
+        ],
         child: MaterialApp.router(
           theme: ThemeData(
             useMaterial3: true,
           ),
           routerConfig: _router,
-        ),
-      );
+        ));
   }
 }

@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:audioapp/screens/authenticate/authHome.dart';
+import 'package:audioapp/screens/home/home.dart';
 import 'package:audioapp/shared/loading.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +20,7 @@ class _LineChart extends StatelessWidget {
   const _LineChart({Key? key, required this.data}) : super(key: key);
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    final style = const TextStyle(
+    const style = TextStyle(
       color: Colors.black,
     );
     return SideTitleWidget(
@@ -29,7 +32,7 @@ class _LineChart extends StatelessWidget {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    final style = const TextStyle(
+    const style = TextStyle(
       color: Colors.black,
     );
     return SideTitleWidget(
@@ -41,9 +44,8 @@ class _LineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('data $data');
 
-    String? time = data.remove('time');
-    print('time $time data $data');
     List<FlSpot> spots = [];
 
     List<String> frequencies = ['500', '1000', '2000', '3000', '4000', '6000', '8000'];
@@ -130,6 +132,7 @@ class _LineChart extends StatelessWidget {
 
 
 class Profile extends StatefulWidget {
+  // final Function toggleView;
   const Profile({Key? key}) : super(key: key);
 
   @override
@@ -139,98 +142,104 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   final AuthService _auth = AuthService();
 
-
+  late Widget content;
 
   @override
   Widget build(BuildContext context) {
 
     final appUser = Provider.of<AppUser?>(context);
+    final appUserData = Provider.of<AppUserData?>(context);
 
-    if (appUser == null) {
+    print('Profile appUser: $appUser');
+    print('Profile appUserData: $appUserData');
+
+    if (appUser == null || appUserData == null) {
       return const AuthHome();
     }
+    print(appUserData.data);
+    if (appUserData.data['test1'].length == 0) {
+      setState(() {
+        content = const Text('No data');
+      });
+    }else {
+      setState(() {
+        content = _LineChart( data: appUserData.data['test1']!.last);
+      });
 
-    return StreamBuilder<AppUserData>(
-      stream: DatabaseService(uid: appUser.uid).getUserData,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          AppUserData? appUserData = snapshot.data;
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.purple[600],
-              scrolledUnderElevation: 4.0,
-              elevation: 0,
-              title: const Text(
-                'Profile',
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.purple[600],
+        scrolledUnderElevation: 4.0,
+        elevation: 0,
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+              color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
+        ),
+        actions: <Widget>[
+          TextButton.icon(
+            onPressed: () async {
+              await _auth.signOut();
+            },
+            icon: Icon(
+              Icons.logout,
+              color: Colors.pink[50],
+            ),
+            label: const Text('logout',
                 style: TextStyle(
-                    color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
-              ),
-              actions: <Widget>[
-                TextButton.icon(
-                  onPressed: () async {
-                    await _auth.signOut();
-                  },
-                  icon: Icon(
-                    Icons.logout,
-                    color: Colors.pink[50],
-                  ),
-                  label: const Text('logout',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      )),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () => {
-                    GoRouter.of(context).go('/home'),
-                  },
-                  icon: Icon(
-                    Icons.home,
-                    color: Colors.pink[50],
-                  ),
-                  label: const Padding(
-                    padding: EdgeInsets.only(right: 8.0),
-                    child: Text('Home',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                        )),
-                  ),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-              ],
+                  fontSize: 18.0,
+                )),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
             ),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20.0, width: double.infinity),
-                const Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Text(
-                    'Test 1 Results',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 50,right: 16, left: 6),
-                    child: _LineChart( data: appUserData!.data['test1']!.last),
-                  ),
-                ),
-
-              ],
+          ),
+          TextButton.icon(
+            onPressed: () => {
+            GoRouter.of(context).go('/home')
+            },
+            icon: Icon(
+              Icons.home,
+              color: Colors.pink[50],
             ),
-          );
-        } else {
-          return Loading();
-        }
-      },
+            label: const Padding(
+              padding: EdgeInsets.only(right: 8.0),
+              child: Text('Home',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  )),
+            ),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 20.0, width: double.infinity),
+          const Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Text(
+              'Test 1 Results',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 24.0),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 50,right: 16, left: 6),
+              child: content,
+            ),
+          ),
 
+        ],
+      ),
     );
   }
 }
+
+

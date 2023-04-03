@@ -1,12 +1,17 @@
 import 'package:audioapp/screens/preTest/quiet.dart';
 import 'package:flutter/material.dart';
 
+
 class HeadPhone extends StatelessWidget {
   final String test;
   const HeadPhone({Key? key, required this.test}) : super(key: key);
 
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple[600],
