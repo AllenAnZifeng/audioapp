@@ -14,10 +14,9 @@ import 'package:provider/provider.dart';
 import '../../models/appUser.dart';
 import '../../services/auth.dart';
 
-
-
 class _LineChart extends StatelessWidget {
-  final Map<String, dynamic> data;
+  final List<dynamic> data;
+
 
   const _LineChart({Key? key, required this.data}) : super(key: key);
 
@@ -45,13 +44,12 @@ class _LineChart extends StatelessWidget {
 
 
 
-
   @override
   Widget build(BuildContext context) {
+    const double opacity = 1.0;
     print('data $data');
 
-    List<FlSpot> leftSpots = [];
-    List<FlSpot> rightSpots = [];
+    List<LineChartBarData> allSpots = [];
 
 
     List<String> frequencies = [
@@ -63,49 +61,96 @@ class _LineChart extends StatelessWidget {
       '6000',
       '8000'
     ];
-    for (String frequency in frequencies) {
-      leftSpots
-          .add(FlSpot(double.parse(frequency), data[frequency][0].toDouble()));
-      rightSpots
-          .add(FlSpot(double.parse(frequency), data[frequency][1].toDouble()));
+
+    LineChartBarData getLeftEarData(List<FlSpot> leftSpots) {
+      return LineChartBarData(
+        spots: leftSpots,
+        color: Colors.purple[100],
+        barWidth: 4,
+        isStrokeCapRound: true,
+        dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, percent, barData, index) {
+              return FlDotCirclePainter(
+                radius: 4,
+                color: Colors.purple[100]?.withOpacity(opacity),
+                strokeWidth: 4,
+                strokeColor: Colors.purple[100]?.withOpacity(opacity),
+              );
+            }),
+      );
     }
 
-    const double opacity = 1.0;
+    LineChartBarData getRightEarData(List<FlSpot> rightSpots) {
+      return LineChartBarData(
+        spots: rightSpots,
+        color: Colors.green[100],
+        barWidth: 2,
+        dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, percent, barData, index) {
+              return FlDotCirclePainter(
+                radius: 4,
+                color: Colors.green[100]?.withOpacity(opacity),
+                strokeWidth: 4,
+                strokeColor: Colors.green[100]?.withOpacity(opacity),
+              );
+            }),
+      );
+    }
 
-    final LineChartBarData leftEarLineData = LineChartBarData(
-      spots: leftSpots,
-      color: Colors.purple[100],
-      barWidth: 3,
-      isStrokeCapRound: true,
-      dotData: FlDotData(
-        show: true,
-          getDotPainter: (spot, percent, barData, index) {
-            return FlDotCirclePainter(
-              radius: 4,
-              color: Colors.purple[100]?.withOpacity(opacity),
-              strokeWidth: 6,
-              strokeColor: Colors.purple[100]?.withOpacity(opacity),
-            );
-          }
-      ),
-    );
+    for (int i = 0; i < data.length; i++) {
+      List<FlSpot> leftSpots = [];
+      List<FlSpot> rightSpots = [];
+      for (String frequency in frequencies) {
+        leftSpots
+            .add(FlSpot(double.parse(frequency), data[i][frequency][0].toDouble()));
+        rightSpots
+            .add(FlSpot(double.parse(frequency), data[i][frequency][1].toDouble()));
+      }
+      allSpots.add(getLeftEarData(leftSpots));
+      allSpots.add(getRightEarData(rightSpots));
 
-    final LineChartBarData rightEarLineData = LineChartBarData(
-      spots: rightSpots,
-      color: Colors.green[100],
-      barWidth: 3,
-      dotData: FlDotData(
-        show: true,
-        getDotPainter: (spot, percent, barData, index) {
-          return FlDotCirclePainter(
-            radius: 4,
-            color: Colors.green[100]?.withOpacity(opacity),
-            strokeWidth: 2,
-            strokeColor: Colors.green[100]?.withOpacity(opacity),
-          );
-        }
-      ),
-    );
+    }
+
+
+
+
+
+
+
+    // final LineChartBarData leftEarLineData = LineChartBarData(
+    //   spots: leftSpots,
+    //   color: Colors.purple[100],
+    //   barWidth: 4,
+    //   isStrokeCapRound: true,
+    //   dotData: FlDotData(
+    //       show: true,
+    //       getDotPainter: (spot, percent, barData, index) {
+    //         return FlDotCirclePainter(
+    //           radius: 4,
+    //           color: Colors.purple[100]?.withOpacity(opacity),
+    //           strokeWidth: 4,
+    //           strokeColor: Colors.purple[100]?.withOpacity(opacity),
+    //         );
+    //       }),
+    // );
+
+    // final LineChartBarData rightEarLineData = LineChartBarData(
+    //   spots: rightSpots,
+    //   color: Colors.green[100],
+    //   barWidth: 2,
+    //   dotData: FlDotData(
+    //       show: true,
+    //       getDotPainter: (spot, percent, barData, index) {
+    //         return FlDotCirclePainter(
+    //           radius: 4,
+    //           color: Colors.green[100]?.withOpacity(opacity),
+    //           strokeWidth: 1,
+    //           strokeColor: Colors.green[100]?.withOpacity(opacity),
+    //         );
+    //       }),
+    // );
 
     return LineChart(
       LineChartData(
@@ -156,16 +201,12 @@ class _LineChart extends StatelessWidget {
             ),
           ),
         ),
-        lineBarsData: [
-          leftEarLineData,
-          rightEarLineData,
-        ],
+        lineBarsData: allSpots,
         minX: 0,
         maxX: 8000,
         minY: 0,
         maxY: 0.2,
       ),
-
     );
   }
 }
@@ -180,13 +221,17 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final AuthService _auth = AuthService();
-
-  late Widget content;
+  List<bool> checkedStates = [];
+  late Widget plot;
+  late Widget pastData;
+  bool loading = false;
+  bool initFlag = true;
 
   String getTitles(value) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(value));
     return '${date.year}/${date.month}/${date.day}';
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -194,8 +239,8 @@ class _ProfileState extends State<Profile> {
     final appUserData = Provider.of<AppUserData?>(context);
     String time = '';
 
-    print('Profile appUser: $appUser');
-    print('Profile appUserData: $appUserData');
+    // print('Profile appUser: $appUser');
+    // print('Profile appUserData: $appUserData');
 
     if (appUser == null || appUserData == null) {
       return const AuthHome();
@@ -203,18 +248,76 @@ class _ProfileState extends State<Profile> {
     print(appUserData.data);
     if (appUserData.data['test1'].length == 0) {
       setState(() {
-        content = const Text('No data');
+        plot = const Text('No data');
+        pastData = const Text('No data');
       });
     } else {
-      time = getTitles( appUserData.data['test1']!.last['time']);
-      setState(() {
-        content = _LineChart(data: appUserData.data['test1']!.last);
-      });
+      if (initFlag) {
+        setState(() {
+          checkedStates =
+          List<bool>.filled(appUserData.data['test1'].length, false);
+          checkedStates[checkedStates.length - 1] = true;
+          initFlag = false;
+        });
+      }
+
+
+      if (checkedStates.isEmpty) {
+        setState(() {
+          loading = true;
+        });
+      } else {
+        setState(() {
+          loading = false;
+        });
+
+        time = getTitles(appUserData.data['test1']!.last['time']);
+        List data = List.generate(appUserData.data['test1'].length, (i) => appUserData.data['test1'][i]).where((e) => checkedStates[appUserData.data['test1'].indexOf(e)]).toList();
+        setState(() {
+          plot = _LineChart(data: data);
+          pastData = ListView.builder(
+              itemCount: appUserData.data['test1'].length,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Card(
+                    margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          checkedStates[index] = !checkedStates[index];
+                        });
+                        print('tapping $index');
+                        print(checkedStates);
+                      },
+                      child: ListTile(
+                        leading: const CircleAvatar(
+                          radius: 30.0,
+                          backgroundImage: AssetImage('assets/ears.png'),
+                        ),
+                        title: Text(getTitles(
+                            appUserData.data['test1']![index]['time'])),
+                        subtitle: const Text('Test Results'),
+                        trailing: Icon(
+                          checkedStates[index]
+                              ? Icons.check_circle
+                              : Icons.circle,
+                          color: checkedStates[index]
+                              ? Colors.purple[400]
+                              : Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              });
+        });
+      }
     }
 
-
-
-    return Scaffold(
+    return loading? Loading() : Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple[600],
         scrolledUnderElevation: 4.0,
@@ -260,56 +363,69 @@ class _ProfileState extends State<Profile> {
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 20.0, width: double.infinity),
-          const Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text(
-              'Test 1 Results',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24.0),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Text(
-              'Audiogram $time',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16.0),
-            ),
-          ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(color: Colors.purple[100], shape: BoxShape.circle),
+            const SizedBox(height: 20.0, width: double.infinity),
+            const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                'Test 1 Results',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24.0),
+              ),
             ),
-            const SizedBox(width: 4),
-            const Text('Left Ear', style: TextStyle(fontSize: 12)),
-            Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(color: Colors.green[100], shape: BoxShape.circle),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$time -- ',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12.0),
+                ),
+                const SizedBox(width: 4),
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                      color: Colors.purple[100], shape: BoxShape.circle),
+                ),
+                const SizedBox(width: 4),
+                const Text('Left Ear', style: TextStyle(fontSize: 12)),
+                const SizedBox(width: 4),
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                      color: Colors.green[100], shape: BoxShape.circle),
+                ),
+                const SizedBox(width: 4),
+                const Text('Right Ear', style: TextStyle(fontSize: 12)),
+              ],
             ),
-            const SizedBox(width: 4),
-            const Text('  Right Ear', style: TextStyle(fontSize: 12)),
+            SizedBox(
+              height: 500,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    top: 20, bottom: 20, right: 40, left: 20),
+                child: plot,
+              ),
+            ),
+            const SizedBox(height: 5.0, width: double.infinity),
+            const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                'All Test Results',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24.0),
+              ),
+            ),
+            pastData,
+            const SizedBox(height: 50.0, width: double.infinity),
           ],
         ),
-          const SizedBox(height: 20.0, width: double.infinity),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  top: 20, bottom: 20, right: 40, left: 20),
-              child: content,
-            ),
-          ),
-          const SizedBox(height: 50.0, width: double.infinity),
-        ],
       ),
     );
   }
