@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:ffi';
 import 'dart:math';
 
@@ -16,10 +17,10 @@ import '../../models/appUser.dart';
 import '../../services/auth.dart';
 
 class _LineChart extends StatefulWidget {
-  final List<dynamic> data;
-  final List<dynamic> colors;
+  final Map<dynamic,dynamic> dataColor;
 
-  const _LineChart({Key? key, required this.data, required this.colors})
+
+  const _LineChart({Key? key, required this.dataColor})
       : super(key: key);
 
   @override
@@ -27,17 +28,7 @@ class _LineChart extends StatefulWidget {
 }
 
 class _LineChartState extends State<_LineChart> {
-  List<int> _lineOrder = []; // Initial order of the lines
 
-  @override
-  void initState() {
-    super.initState();
-    for (int i = 0; i < widget.data.length; i++) {
-      setState(() {
-        _lineOrder.add(i);
-      });
-    }
-  }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
@@ -67,15 +58,7 @@ class _LineChartState extends State<_LineChart> {
 
     List<LineChartBarData> allSpots = [];
 
-    List<String> frequencies = [
-      '500',
-      '1000',
-      '2000',
-      '3000',
-      '4000',
-      '6000',
-      '8000'
-    ];
+
 
     LineChartBarData getEarData(List<FlSpot> leftSpots, Color color) {
       return LineChartBarData(
@@ -83,6 +66,7 @@ class _LineChartState extends State<_LineChart> {
         color: color,
         barWidth: 2,
         isStrokeCapRound: true,
+
         dotData: FlDotData(
             show: true,
             getDotPainter: (spot, percent, barData, index) {
@@ -96,20 +80,16 @@ class _LineChartState extends State<_LineChart> {
       );
     }
 
+    widget.dataColor.forEach((index, val) {
+      // print('data: $data, color: $color');
 
 
-    for (int i = 0; i < widget.data.length; i++) {
-      List<FlSpot> leftSpots = [];
-      List<FlSpot> rightSpots = [];
-      for (String frequency in frequencies) {
-        leftSpots.add(FlSpot(
-            double.parse(frequency), widget.data[i][frequency][0].toDouble()));
-        rightSpots.add(FlSpot(
-            double.parse(frequency), widget.data[i][frequency][1].toDouble()));
-      }
-      allSpots.add(getEarData(leftSpots, widget.colors[2 * i]));
-      allSpots.add(getEarData(rightSpots, widget.colors[2 * i + 1]));
-    }
+        allSpots.add(getEarData(val[0], val[1]));
+
+
+    });
+
+
 
     return LineChart(
       LineChartData(
@@ -118,19 +98,7 @@ class _LineChartState extends State<_LineChart> {
           touchTooltipData: LineTouchTooltipData(
             tooltipBgColor: Colors.blueGrey.withOpacity(0.7),
           ),
-          touchCallback:
-              (FlTouchEvent event, LineTouchResponse? touchResponse) {
-            // move the touched line to the fore ground
-            if (touchResponse != null &&
-                touchResponse.lineBarSpots != null &&
-                touchResponse.lineBarSpots!.isNotEmpty) {
-              final int touchedLineIndex =
-                  touchResponse.lineBarSpots![0].barIndex;
-              setState(() {
-                _lineOrder = [touchedLineIndex, 1 - touchedLineIndex];
-              });
-            }
-          },
+
         ),
         titlesData: FlTitlesData(
           topTitles: AxisTitles(
@@ -199,6 +167,19 @@ class _ProfileState extends State<Profile> {
   bool loading = false;
   bool initFlag = true;
   List<Color> colors = [];
+  int lastTapped = 0;
+
+  LinkedHashMap dataColor= LinkedHashMap(); // index: [data, color]
+  // Map<dynamic,Color> dataColor = {};
+  final List<String> frequencies = [
+    '500',
+    '1000',
+    '2000',
+    '3000',
+    '4000',
+    '6000',
+    '8000'
+  ];
 
   String getTitles(value) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(value));
@@ -209,15 +190,39 @@ class _ProfileState extends State<Profile> {
     if (n == 0) {
       return [];
     }
+    if (n <= 5) {
+      List<Color> result = [];
+      List<Color> colors = [
+        Colors.purple[100]!,
+        Colors.purple[300]!,
+        Colors.red[100]!,
+        Colors.red[300]!,
+        Colors.green[100]!,
+        Colors.green[300]!,
+        Colors.blue[100]!,
+        Colors.blue[300]!,
+        Colors.yellow[100]!,
+        Colors.yellow[300]!,
+      ];
+
+      for (int i = 0; i < n; i++) {
+        result.add(colors[2*i]);
+        result.add(colors[2*i+1]);
+      }
+
+      return result;
+    }
     final List<Color> colors = [];
     final Random random = Random();
     final int step = (360 / n).floor();
-    final int initialHue = random.nextInt(360);
+    // final int initialHue = random.nextInt(360);
+    final int initialHue = 100;
+    print('initialHue $initialHue');
 
     for (int i = 0; i < n; i++) {
       final int hue = (initialHue + i * step) % 360;
-      final double saturation = 0.5 + random.nextDouble() * 0.4; // 50% to 90%
-      final double lightness = 0.5 + random.nextDouble() * 0.4; // 50% to 90%
+      final double saturation = 0.7 + random.nextDouble() * 0.2;
+      final double lightness = 0.7 + random.nextDouble() * 0.2;
       final HSLColor hslColorLeft =
           HSLColor.fromAHSL(1.0, hue.toDouble(), saturation, lightness);
       final HSLColor hslColorRight = HSLColor.fromAHSL(
@@ -271,31 +276,93 @@ class _ProfileState extends State<Profile> {
       }
 
       time = getTitles(appUserData.data['test1']!.last['time']);
-      List data = List.generate(appUserData.data['test1'].length,
-              (i) => appUserData.data['test1'][i])
-          .where((e) => checkedStates[appUserData.data['test1'].indexOf(e)])
-          .toList();
-      print('data ${data.length}');
+      // List filterData = List.generate(appUserData.data['test1'].length,
+      //         (i) => appUserData.data['test1'][i])
+      //     .where((e) => checkedStates[appUserData.data['test1'].indexOf(e)])
+      //     .toList();
 
-      List<bool> tempBool = [];
-      for (int i = 0; i < checkedStates.length; i++) {
-        if (checkedStates[i]) {
-          tempBool.add(true);
-          tempBool.add(true);
-        } else {
-          tempBool.add(false);
-          tempBool.add(false);
+      List filterData = [];
+      for (int i = 0; i < appUserData.data['test1']!.length; i++) {
+        if (checkedStates[i]){
+          filterData.add([i,appUserData.data['test1']![i]]);
         }
       }
 
-      List tempColor = List.generate(colors.length, (i) => colors[i])
-          .where((e) => tempBool[colors.indexOf(e)])
+      List<bool> flatCheckedStates = [];
+      for (int i = 0; i < checkedStates.length; i++) {
+        if (checkedStates[i]) {
+          flatCheckedStates.add(true);
+          flatCheckedStates.add(true);
+        } else {
+          flatCheckedStates.add(false);
+          flatCheckedStates.add(false);
+        }
+      }
+
+      List filterColor = List.generate(colors.length, (i) => colors[i])
+          .where((e) => flatCheckedStates[colors.indexOf(e)])
           .toList();
-      print('Color ${colors}');
-      print('tempColor ${tempColor}');
+      print('filterData  ${filterData}');
+      print('All Colors ${colors}');
+      print('filterColor ${filterColor}');
+      print('flatCheckedStates ${flatCheckedStates}');
 
       setState(() {
-        plot = _LineChart(data: data, colors: tempColor);
+        dataColor = LinkedHashMap();
+      });
+
+
+      // if (lastTapped != 0 && checkedStates[lastTapped] && filterData.isNotEmpty) {
+      //   // swap data index 0 with lastTapped
+      //   var temp = filterData[0];
+      //   filterData[0] = filterData[lastTapped];
+      //   filterData[lastTapped] = temp;
+      //
+      //   // swap color index 0 with lastTapped
+      //   temp = filterColor[0];
+      //   filterColor[0] = filterColor[lastTapped];
+      //   filterColor[lastTapped] = temp;
+      //
+      //   // swap color index 1 with lastTapped
+      //   temp = filterColor[1];
+      //   filterColor[1] = filterColor[lastTapped+1];
+      //   filterColor[lastTapped+1] = temp;
+      //
+      //
+      // }
+
+      for (int i = 0; i < filterData.length; i++) {
+        List<FlSpot> leftSpots = [];
+        List<FlSpot> rightSpots = [];
+        for (String frequency in frequencies) {
+
+          leftSpots.add(FlSpot(
+              double.parse(frequency),filterData[i][1][frequency][0].toDouble()));
+          rightSpots.add(FlSpot(
+              double.parse(frequency), filterData[i][1][frequency][1].toDouble()));
+        }
+        setState(() {
+          dataColor[2*filterData[i][0]] = [leftSpots,filterColor[2*i]];
+          dataColor[2*filterData[i][0]+1] =[rightSpots,filterColor[2*i+1]];
+
+        });
+
+      }
+
+      if (checkedStates[lastTapped]) {
+        var tempData1 = dataColor.remove(2*lastTapped);
+        var tempData2 = dataColor.remove(2*lastTapped + 1);
+        dataColor[2*lastTapped] = tempData1;
+        dataColor[2*lastTapped + 1] = tempData2;
+      }
+
+
+
+
+      print('dataColor $dataColor');
+
+      setState(() {
+        plot = _LineChart(dataColor: dataColor);
         pastData = ListView.builder(
             itemCount: appUserData.data['test1'].length,
             shrinkWrap: true,
@@ -309,8 +376,10 @@ class _ProfileState extends State<Profile> {
                   child: InkWell(
                     onTap: () {
                       setState(() {
+                        lastTapped = index;
                         checkedStates[index] = !checkedStates[index];
                       });
+
                       print('tapping $index');
                       print(checkedStates);
                     },
