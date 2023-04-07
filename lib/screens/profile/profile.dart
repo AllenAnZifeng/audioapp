@@ -146,7 +146,9 @@ class _LineChartState extends State<_LineChart> {
         maxX: 8000,
         minY: 0,
         maxY: 0.2,
+
       ),
+      swapAnimationDuration: const Duration(milliseconds: 0),
     );
   }
 }
@@ -168,8 +170,9 @@ class _ProfileState extends State<Profile> {
   bool initFlag = true;
   List<Color> colors = [];
   int lastTapped = 0;
+  List<Widget> row = [];
 
-  LinkedHashMap dataColor= LinkedHashMap(); // index: [data, color]
+  LinkedHashMap dataColorTime= LinkedHashMap(); // index: [data, color, time]
   // Map<dynamic,Color> dataColor = {};
   final List<String> frequencies = [
     '500',
@@ -281,10 +284,10 @@ class _ProfileState extends State<Profile> {
       //     .where((e) => checkedStates[appUserData.data['test1'].indexOf(e)])
       //     .toList();
 
-      List filterData = [];
+      List filterData = []; // [index, data, time]
       for (int i = 0; i < appUserData.data['test1']!.length; i++) {
         if (checkedStates[i]){
-          filterData.add([i,appUserData.data['test1']![i]]);
+          filterData.add([i,appUserData.data['test1']![i],appUserData.data['test1']![i]['time']]);
         }
       }
 
@@ -308,28 +311,12 @@ class _ProfileState extends State<Profile> {
       print('flatCheckedStates ${flatCheckedStates}');
 
       setState(() {
-        dataColor = LinkedHashMap();
+        dataColorTime = LinkedHashMap();
+        row = [];
       });
 
 
-      // if (lastTapped != 0 && checkedStates[lastTapped] && filterData.isNotEmpty) {
-      //   // swap data index 0 with lastTapped
-      //   var temp = filterData[0];
-      //   filterData[0] = filterData[lastTapped];
-      //   filterData[lastTapped] = temp;
-      //
-      //   // swap color index 0 with lastTapped
-      //   temp = filterColor[0];
-      //   filterColor[0] = filterColor[lastTapped];
-      //   filterColor[lastTapped] = temp;
-      //
-      //   // swap color index 1 with lastTapped
-      //   temp = filterColor[1];
-      //   filterColor[1] = filterColor[lastTapped+1];
-      //   filterColor[lastTapped+1] = temp;
-      //
-      //
-      // }
+
 
       for (int i = 0; i < filterData.length; i++) {
         List<FlSpot> leftSpots = [];
@@ -342,31 +329,68 @@ class _ProfileState extends State<Profile> {
               double.parse(frequency), filterData[i][1][frequency][1].toDouble()));
         }
         setState(() {
-          dataColor[2*filterData[i][0]] = [leftSpots,filterColor[2*i]];
-          dataColor[2*filterData[i][0]+1] =[rightSpots,filterColor[2*i+1]];
+          dataColorTime[2*filterData[i][0]] = [leftSpots,filterColor[2*i],filterData[i][2]];
+          dataColorTime[2*filterData[i][0]+1] =[rightSpots,filterColor[2*i+1],filterData[i][2]];
 
         });
 
       }
 
       if (checkedStates[lastTapped]) {
-        var tempData1 = dataColor.remove(2*lastTapped);
-        var tempData2 = dataColor.remove(2*lastTapped + 1);
-        dataColor[2*lastTapped] = tempData1;
-        dataColor[2*lastTapped + 1] = tempData2;
+        var tempData1 = dataColorTime.remove(2*lastTapped);
+        var tempData2 = dataColorTime.remove(2*lastTapped + 1);
+        dataColorTime[2*lastTapped] = tempData1;
+        dataColorTime[2*lastTapped + 1] = tempData2;
       }
 
-
-
-
-      print('dataColor $dataColor');
+      print('dataColor $dataColorTime');
 
       setState(() {
-        plot = _LineChart(dataColor: dataColor);
+        bool flag = true;
+        dataColorTime.forEach((index, val) {
+          // print('data: $data, color: $color');
+
+          if (flag) {
+            row.add(Text(
+              '${getTitles(val[2])} -- ',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12.0),
+            ));
+            row.add(const SizedBox(width: 4));
+
+          }
+          row.add(Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+                color: val[1], shape: BoxShape.circle),
+          ));
+          row.add(const SizedBox(width: 4));
+          if (flag) {
+            row.add(const Text('Left Ear', style: TextStyle(fontSize: 12)));
+            flag = false;
+          } else {
+            row.add(const Text('Right Ear', style: TextStyle(fontSize: 12)));
+            flag = true;
+          }
+
+
+        });
+      });
+
+
+
+
+
+
+
+
+      setState(() {
+        plot = _LineChart(dataColor: dataColorTime);
         pastData = ListView.builder(
             itemCount: appUserData.data['test1'].length,
             shrinkWrap: true,
-            reverse: false,
+            reverse: true,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               return Padding(
@@ -471,33 +495,9 @@ class _ProfileState extends State<Profile> {
                       style: TextStyle(fontSize: 24.0),
                     ),
                   ),
-                  Row(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '$time -- ',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12.0),
-                      ),
-                      const SizedBox(width: 4),
-                      Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                            color: Colors.purple[100], shape: BoxShape.circle),
-                      ),
-                      const SizedBox(width: 4),
-                      const Text('Left Ear', style: TextStyle(fontSize: 12)),
-                      const SizedBox(width: 4),
-                      Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                            color: Colors.green[100], shape: BoxShape.circle),
-                      ),
-                      const SizedBox(width: 4),
-                      const Text('Right Ear', style: TextStyle(fontSize: 12)),
-                    ],
+                    children: row,
                   ),
                   SizedBox(
                     height: 500,
