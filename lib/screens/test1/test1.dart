@@ -106,14 +106,15 @@ class _Test1State extends State<Test1> {
       setState(() {
         ear = ears[k];
       });
+      setState(() {
+        progress = 0;
+      });
 
 
 
       for (int i = 0; i < frequencies.length; i++) {
         print('frequency ${frequencies[i]}');
-        setState(() {
-          progress = (i+1) / frequencies.length;
-        });
+
         for (int j = 0; j < vols.length; j++) {
           if (!mounted) {
             return;
@@ -132,6 +133,9 @@ class _Test1State extends State<Test1> {
             await Future.delayed(const Duration(milliseconds: 1000));
           }
         }
+        setState(() {
+          progress = (i+1) / frequencies.length;
+        });
         setState(() {
           heard = false;
         });

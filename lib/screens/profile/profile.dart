@@ -17,19 +17,15 @@ import '../../models/appUser.dart';
 import '../../services/auth.dart';
 
 class _LineChart extends StatefulWidget {
-  final Map<dynamic,dynamic> dataColor;
+  final Map<dynamic, dynamic> dataColor;
 
-
-  const _LineChart({Key? key, required this.dataColor})
-      : super(key: key);
+  const _LineChart({Key? key, required this.dataColor}) : super(key: key);
 
   @override
   State<_LineChart> createState() => _LineChartState();
 }
 
 class _LineChartState extends State<_LineChart> {
-
-
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       color: Colors.black,
@@ -58,15 +54,12 @@ class _LineChartState extends State<_LineChart> {
 
     List<LineChartBarData> allSpots = [];
 
-
-
     LineChartBarData getEarData(List<FlSpot> leftSpots, Color color) {
       return LineChartBarData(
         spots: leftSpots,
         color: color,
         barWidth: 2,
         isStrokeCapRound: true,
-
         dotData: FlDotData(
             show: true,
             getDotPainter: (spot, percent, barData, index) {
@@ -83,13 +76,8 @@ class _LineChartState extends State<_LineChart> {
     widget.dataColor.forEach((index, val) {
       // print('data: $data, color: $color');
 
-
-        allSpots.add(getEarData(val[0], val[1]));
-
-
+      allSpots.add(getEarData(val[0], val[1]));
     });
-
-
 
     return LineChart(
       LineChartData(
@@ -98,7 +86,6 @@ class _LineChartState extends State<_LineChart> {
           touchTooltipData: LineTouchTooltipData(
             tooltipBgColor: Colors.blueGrey.withOpacity(0.7),
           ),
-
         ),
         titlesData: FlTitlesData(
           topTitles: AxisTitles(
@@ -146,7 +133,6 @@ class _LineChartState extends State<_LineChart> {
         maxX: 8000,
         minY: 0,
         maxY: 0.2,
-
       ),
       swapAnimationDuration: const Duration(milliseconds: 0),
     );
@@ -161,7 +147,7 @@ class Profile extends StatefulWidget {
   State<Profile> createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   final AuthService _auth = AuthService();
   List<bool> checkedStates = [];
   late Widget plot;
@@ -171,8 +157,9 @@ class _ProfileState extends State<Profile> {
   List<Color> colors = [];
   int lastTapped = 0;
   List<Widget> row = [];
+  int tabIndex = 0;
 
-  LinkedHashMap dataColorTime= LinkedHashMap(); // index: [data, color, time]
+  LinkedHashMap dataColorTime = LinkedHashMap(); // index: [data, color, time]
   // Map<dynamic,Color> dataColor = {};
   final List<String> frequencies = [
     '500',
@@ -183,6 +170,31 @@ class _ProfileState extends State<Profile> {
     '6000',
     '8000'
   ];
+
+  TabController? _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController!.addListener(_handleTabSelection);
+  }
+
+  @override
+  void dispose() {
+    _tabController!.removeListener(_handleTabSelection);
+    _tabController?.dispose();
+
+    super.dispose();
+  }
+
+  void _handleTabSelection() {
+    if (_tabController!.indexIsChanging) {
+      setState(() {
+        tabIndex = _tabController!.index;
+      });
+    }
+  }
 
   String getTitles(value) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(value));
@@ -209,8 +221,8 @@ class _ProfileState extends State<Profile> {
       ];
 
       for (int i = 0; i < n; i++) {
-        result.add(colors[2*i]);
-        result.add(colors[2*i+1]);
+        result.add(colors[2 * i]);
+        result.add(colors[2 * i + 1]);
       }
 
       return result;
@@ -238,15 +250,11 @@ class _ProfileState extends State<Profile> {
     return colors;
   }
 
+
   @override
   Widget build(BuildContext context) {
     final appUser = Provider.of<AppUser?>(context);
     final appUserData = Provider.of<AppUserData?>(context);
-
-    String time = '';
-
-    // print('Profile appUser: $appUser');
-    // print('Profile appUserData: $appUserData');
 
     if (appUser == null || appUserData == null) {
       return const AuthHome();
@@ -278,16 +286,14 @@ class _ProfileState extends State<Profile> {
         });
       }
 
-      time = getTitles(appUserData.data['test1']!.last['time']);
-      // List filterData = List.generate(appUserData.data['test1'].length,
-      //         (i) => appUserData.data['test1'][i])
-      //     .where((e) => checkedStates[appUserData.data['test1'].indexOf(e)])
-      //     .toList();
-
       List filterData = []; // [index, data, time]
       for (int i = 0; i < appUserData.data['test1']!.length; i++) {
-        if (checkedStates[i]){
-          filterData.add([i,appUserData.data['test1']![i],appUserData.data['test1']![i]['time']]);
+        if (checkedStates[i]) {
+          filterData.add([
+            i,
+            appUserData.data['test1']![i],
+            appUserData.data['test1']![i]['time']
+          ]);
         }
       }
 
@@ -315,32 +321,34 @@ class _ProfileState extends State<Profile> {
         row = [];
       });
 
-
-
-
       for (int i = 0; i < filterData.length; i++) {
         List<FlSpot> leftSpots = [];
         List<FlSpot> rightSpots = [];
         for (String frequency in frequencies) {
-
-          leftSpots.add(FlSpot(
-              double.parse(frequency),filterData[i][1][frequency][0].toDouble()));
-          rightSpots.add(FlSpot(
-              double.parse(frequency), filterData[i][1][frequency][1].toDouble()));
+          leftSpots.add(FlSpot(double.parse(frequency),
+              filterData[i][1][frequency][0].toDouble()));
+          rightSpots.add(FlSpot(double.parse(frequency),
+              filterData[i][1][frequency][1].toDouble()));
         }
         setState(() {
-          dataColorTime[2*filterData[i][0]] = [leftSpots,filterColor[2*i],filterData[i][2]];
-          dataColorTime[2*filterData[i][0]+1] =[rightSpots,filterColor[2*i+1],filterData[i][2]];
-
+          dataColorTime[2 * filterData[i][0]] = [
+            leftSpots,
+            filterColor[2 * i],
+            filterData[i][2]
+          ];
+          dataColorTime[2 * filterData[i][0] + 1] = [
+            rightSpots,
+            filterColor[2 * i + 1],
+            filterData[i][2]
+          ];
         });
-
       }
 
       if (checkedStates[lastTapped]) {
-        var tempData1 = dataColorTime.remove(2*lastTapped);
-        var tempData2 = dataColorTime.remove(2*lastTapped + 1);
-        dataColorTime[2*lastTapped] = tempData1;
-        dataColorTime[2*lastTapped + 1] = tempData2;
+        var tempData1 = dataColorTime.remove(2 * lastTapped);
+        var tempData2 = dataColorTime.remove(2 * lastTapped + 1);
+        dataColorTime[2 * lastTapped] = tempData1;
+        dataColorTime[2 * lastTapped + 1] = tempData2;
       }
 
       print('dataColor $dataColorTime');
@@ -357,13 +365,11 @@ class _ProfileState extends State<Profile> {
               style: TextStyle(fontSize: 12.0),
             ));
             row.add(const SizedBox(width: 4));
-
           }
           row.add(Container(
             width: 10,
             height: 10,
-            decoration: BoxDecoration(
-                color: val[1], shape: BoxShape.circle),
+            decoration: BoxDecoration(color: val[1], shape: BoxShape.circle),
           ));
           row.add(const SizedBox(width: 4));
           if (flag) {
@@ -373,24 +379,15 @@ class _ProfileState extends State<Profile> {
             row.add(const Text('Right Ear', style: TextStyle(fontSize: 12)));
             flag = true;
           }
-
-
         });
       });
-
-
-
-
-
-
-
 
       setState(() {
         plot = _LineChart(dataColor: dataColorTime);
         pastData = ListView.builder(
             itemCount: appUserData.data['test1'].length,
             shrinkWrap: true,
-            reverse: true,
+            reverse: false,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               return Padding(
@@ -431,59 +428,103 @@ class _ProfileState extends State<Profile> {
       });
     }
 
+    Widget _buildTab({required bool isSelected, required int number}) {
+      print(_tabController!.index);
+      return Tab(
+          icon: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/test$number.png',
+                width: 25,
+                height: 25,
+                color: isSelected
+                    ? Colors.white
+                    : Colors.grey[500],
+              ),
+               Padding(
+                padding: EdgeInsets.only(left: 14.0),
+                child: Text('Test $number',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: isSelected
+                          ? Colors.white
+                          : Colors.grey[500],
+                    )),
+              )
+            ],
+          ));
+    }
+
+
+
     return loading
         ? Loading()
-        : Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.purple[600],
-              scrolledUnderElevation: 4.0,
-              elevation: 0,
-              title: const Text(
-                'Profile',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold),
-              ),
-              actions: <Widget>[
-                TextButton.icon(
-                  onPressed: () async {
-                    await _auth.signOut();
-                  },
-                  icon: Icon(
-                    Icons.logout,
-                    color: Colors.pink[50],
-                  ),
-                  label: const Text('logout',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      )),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                  ),
+        : DefaultTabController(
+            length: 3,
+            child: Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.purple[600],
+                scrolledUnderElevation: 4.0,
+                elevation: 0,
+                title: const Text(
+                  'Profile',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
                 ),
-                TextButton.icon(
-                  onPressed: () => {GoRouter.of(context).go('/home')},
-                  icon: Icon(
-                    Icons.home,
-                    color: Colors.pink[50],
-                  ),
-                  label: const Padding(
-                    padding: EdgeInsets.only(right: 8.0),
-                    child: Text('Home',
+                actions: <Widget>[
+                  TextButton.icon(
+                    onPressed: () async {
+                      await _auth.signOut();
+                    },
+                    icon: Icon(
+                      Icons.logout,
+                      color: Colors.pink[50],
+                    ),
+                    label: const Text('logout',
                         style: TextStyle(
                           fontSize: 18.0,
                         )),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                    ),
                   ),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
+                  TextButton.icon(
+                    onPressed: () => {GoRouter.of(context).go('/home')},
+                    icon: Icon(
+                      Icons.home,
+                      color: Colors.pink[50],
+                    ),
+                    label: const Padding(
+                      padding: EdgeInsets.only(right: 8.0),
+                      child: Text('Home',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                          )),
+                    ),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                    ),
                   ),
+                ],
+                bottom: TabBar(
+                  indicatorColor: Colors.black,
+                  controller: _tabController,
+                  tabs: [
+                    _buildTab(isSelected: tabIndex == 0, number: 1),
+                    _buildTab(isSelected: tabIndex == 1, number: 2),
+                    _buildTab(isSelected: tabIndex== 2, number: 3),
+                  ],
                 ),
-              ],
-            ),
-            body: SingleChildScrollView(
+              ),
+              body: TabBarView(
+                controller: _tabController,
+                children: [
+              SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20.0, width: double.infinity),
@@ -495,9 +536,14 @@ class _ProfileState extends State<Profile> {
                       style: TextStyle(fontSize: 24.0),
                     ),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: row,
+                  pastData,
+                  const Padding(
+                    padding: EdgeInsets.only(top:20.0),
+                    child: Text(
+                      'Audiometry Results',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 24.0),
+                    ),
                   ),
                   SizedBox(
                     height: 500,
@@ -508,16 +554,17 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   const SizedBox(height: 5.0, width: double.infinity),
-                  const Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Text(
-                      'All Test Results',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24.0),
-                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: row,
                   ),
-                  pastData,
+
                   const SizedBox(height: 50.0, width: double.infinity),
+                ],
+              ),
+            ),
+                  Icon(Icons.directions_transit),
+                  Icon(Icons.directions_bike),
                 ],
               ),
             ),
