@@ -149,7 +149,6 @@ class Test1Result extends StatefulWidget {
 }
 
 class _Test1ResultState extends State<Test1Result> {
-
   List<bool> checkedStates = [];
   late Widget plot;
   late Widget pastData;
@@ -158,7 +157,6 @@ class _Test1ResultState extends State<Test1Result> {
   List<Color> colors = [];
   int lastTapped = 0;
   List<Widget> row = [];
-
 
   LinkedHashMap dataColorTime = LinkedHashMap(); // index: [data, color, time]
   // Map<dynamic,Color> dataColor = {};
@@ -172,13 +170,12 @@ class _Test1ResultState extends State<Test1Result> {
     '8000'
   ];
 
-
-
-
-
   String getTitles(value) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(int.parse(value));
-    return '${date.year}/${date.month}/${date.day}';
+    String year = date.year.toString();
+    String month = date.month.toString().padLeft(2, '0');
+    String day = date.day.toString().padLeft(2, '0');
+    return '$year/$month/$day';
   }
 
   List<Color> generateDistinctColors(int n) {
@@ -212,14 +209,13 @@ class _Test1ResultState extends State<Test1Result> {
     final int step = (360 / n).floor();
     // final int initialHue = random.nextInt(360);
     final int initialHue = 100;
-    print('initialHue $initialHue');
 
     for (int i = 0; i < n; i++) {
       final int hue = (initialHue + i * step) % 360;
       final double saturation = 0.7 + random.nextDouble() * 0.2;
       final double lightness = 0.7 + random.nextDouble() * 0.2;
       final HSLColor hslColorLeft =
-      HSLColor.fromAHSL(1.0, hue.toDouble(), saturation, lightness);
+          HSLColor.fromAHSL(1.0, hue.toDouble(), saturation, lightness);
       final HSLColor hslColorRight = HSLColor.fromAHSL(
           1.0, hue.toDouble(), saturation + 0.1, lightness + 0.1);
 
@@ -229,7 +225,6 @@ class _Test1ResultState extends State<Test1Result> {
 
     return colors;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +244,7 @@ class _Test1ResultState extends State<Test1Result> {
       if (initFlag) {
         setState(() {
           checkedStates =
-          List<bool>.filled(appUserData.data['test1'].length, false);
+              List<bool>.filled(appUserData.data['test1'].length, false);
           checkedStates[checkedStates.length - 1] = true;
           colors = generateDistinctColors(checkedStates.length);
           initFlag = false;
@@ -333,33 +328,41 @@ class _Test1ResultState extends State<Test1Result> {
 
       print('dataColor $dataColorTime');
 
-      setState(() {
-        bool flag = true;
-        dataColorTime.forEach((index, val) {
-          // print('data: $data, color: $color');
+      bool flag = true;
+      List<Widget> temp = [];
+      dataColorTime.forEach((index, val) {
+        // print('data: $data, color: $color');
 
-          if (flag) {
-            row.add(Text(
-              '${getTitles(val[2])} -- ',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12.0),
-            ));
-            row.add(const SizedBox(width: 4));
-          }
-          row.add(Container(
-            width: 10,
-            height: 10,
-            decoration: BoxDecoration(color: val[1], shape: BoxShape.circle),
+        if (flag) {
+          temp.add(Text(
+            '${getTitles(val[2])} -- ',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12.0),
           ));
-          row.add(const SizedBox(width: 4));
-          if (flag) {
-            row.add(const Text('Left Ear', style: TextStyle(fontSize: 12)));
-            flag = false;
-          } else {
-            row.add(const Text('Right Ear', style: TextStyle(fontSize: 12)));
-            flag = true;
-          }
-        });
+          temp.add(const SizedBox(width: 4));
+        }
+        temp.add(Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: val[1], shape: BoxShape.circle),
+        ));
+        temp.add(const SizedBox(width: 4));
+        if (flag) {
+          temp.add(const Text('Left Ear ', style: TextStyle(fontSize: 12)));
+          flag = false;
+
+        } else {
+          temp.add(const Text('Right Ear', style: TextStyle(fontSize: 12)));
+          flag = true;
+          setState(() {
+            row.add(Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: temp,
+            ));
+          });
+          temp = [];
+        }
+
       });
 
       setState(() {
@@ -411,46 +414,44 @@ class _Test1ResultState extends State<Test1Result> {
     return loading
         ? Loading()
         : SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 20.0, width: double.infinity),
-                  const Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Text(
-                      'Test 1 Results',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24.0),
-                    ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20.0, width: double.infinity),
+                const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Text(
+                    'Test 1 Results',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 24.0),
                   ),
-                  pastData,
-                  const Padding(
-                    padding: EdgeInsets.only(top:20.0),
-                    child: Text(
-                      'Audiometry Results',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24.0),
-                    ),
+                ),
+                pastData,
+                const Padding(
+                  padding: EdgeInsets.only(top: 20.0),
+                  child: Text(
+                    'Audiometry Results',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 24.0),
                   ),
-                  SizedBox(
-                    height: 500,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20, bottom: 20, right: 40, left: 20),
-                      child: plot,
-                    ),
+                ),
+                SizedBox(
+                  height: 500,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20, bottom: 20, right: 40, left: 20),
+                    child: plot,
                   ),
-                  const SizedBox(height: 5.0, width: double.infinity),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: row,
-                  ),
-
-                  const SizedBox(height: 50.0, width: double.infinity),
-                ],
-              ),
-            );
-
+                ),
+                const SizedBox(height: 5.0, width: double.infinity),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: row,
+                ),
+                const SizedBox(height: 50.0, width: double.infinity),
+              ],
+            ),
+          );
   }
 }

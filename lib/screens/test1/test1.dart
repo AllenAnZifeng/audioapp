@@ -1,3 +1,4 @@
+import 'package:audioapp/screens/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:go_router/go_router.dart';
@@ -15,11 +16,11 @@ class Test1 extends StatefulWidget {
 }
 
 class _Test1State extends State<Test1> {
-  String buttonState = 'Start';
+  String buttonState = 'End';
   Map<String, String> textDict = {
     'Start': 'Start Test',
     'InTest': 'I heard it!',
-    'End': 'Start Test',
+    'End': 'Go to Results'
   };
   bool playing = false;
   bool heard = false;
@@ -140,13 +141,7 @@ class _Test1State extends State<Test1> {
           heard = false;
         });
       }
-
-
-
-
     }
-
-
 
     setState(() {
       buttonState = 'End';
@@ -200,7 +195,9 @@ class _Test1State extends State<Test1> {
               ),
               child: const Text('Next'),
               onPressed: () {
-                GoRouter.of(context).go('/profile');
+                // GoRouter.of(context).go('/profile');
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Profile(initIndex: 0,)));
               },
             )
           ],
@@ -378,6 +375,9 @@ class _Test1State extends State<Test1> {
                         );
                       } else if (buttonState == 'End') {
                         print('end');
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Profile(initIndex: 0,)));
+
                       }
                     },
                   ),

@@ -10,8 +10,9 @@ import '../../models/appUser.dart';
 import '../../services/auth.dart';
 
 class Profile extends StatefulWidget {
-  // final Function toggleView;
-  const Profile({Key? key}) : super(key: key);
+
+  final int? initIndex;
+  const Profile({Key? key, this.initIndex, }) : super(key: key);
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -20,7 +21,6 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   final AuthService _auth = AuthService();
   int tabIndex = 0;
-
   TabController? _tabController;
 
   @override
@@ -28,6 +28,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _tabController!.addListener(_handleTabSelection);
+    if (widget.initIndex != null) {
+      setState(() {
+        tabIndex = widget.initIndex!;
+      });
+      _tabController!.index = widget.initIndex!;
+
+    }
+
   }
 
   @override
@@ -48,6 +56,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
+
     final appUser = Provider.of<AppUser?>(context);
     final appUserData = Provider.of<AppUserData?>(context);
 
@@ -56,7 +66,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     }
 
     Widget _buildTab({required bool isSelected, required int number}) {
-      print(_tabController!.index);
+      // print(_tabController!.index);
       return Tab(
           icon: Row(
             mainAxisAlignment: MainAxisAlignment.center,
