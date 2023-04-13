@@ -41,8 +41,8 @@ class _HomeState extends State<Home> {
     final appUser = Provider.of<AppUser?>(context);
     final appUserData = Provider.of<AppUserData?>(context);
 
-    print('Home appUser: $appUser');
-    print('Home appUserData: $appUserData');
+    // print('Home appUser: $appUser');
+    // print('Home appUserData: $appUserData');
 
     if (appUser == null) {
       return  const AuthHome();

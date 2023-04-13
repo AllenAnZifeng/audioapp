@@ -18,125 +18,32 @@ import 'package:provider/provider.dart';
 import '../../models/appUser.dart';
 import '../../services/auth.dart';
 
-class _LineChart extends StatefulWidget {
-  final Map<dynamic, dynamic> dataColor;
-
-  const _LineChart({Key? key, required this.dataColor}) : super(key: key);
-
-  @override
-  State<_LineChart> createState() => _LineChartState();
-}
-
-class _LineChartState extends State<_LineChart> {
-  Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.black,
-    );
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 8,
-      child: Text(value.toStringAsFixed(2), style: style),
-    );
-  }
-
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.black,
-    );
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 10,
-      child: Text(meta.formattedValue, style: style),
-    );
-  }
+class DINResultsList extends StatelessWidget {
+  final List<String> dinDescriptions = [
+    'Normal hearing: Individuals with normal hearing can accurately perceive and understand spoken digits even in the presence of background noise. They typically experience little to no difficulty in understanding speech in noisy environments, such as busy streets, restaurants, or social gatherings.',
+    'Mild hearing loss: People with mild hearing loss might experience some challenges in understanding spoken digits in noisy environments, but they can still manage to comprehend speech to a certain extent. They may need to rely more on visual cues, such as lip reading or facial expressions, to compensate for the reduced hearing ability.',
+    // 'Moderate hearing loss: Those with moderate hearing loss struggle to understand speech when background noise is present. They often require the use of hearing aids to improve their hearing ability in noisy situations. In addition, they might need to ask others to speak more slowly, clearly, or loudly to facilitate better communication.',
+    'Severe hearing loss: Individuals with severe hearing loss have significant difficulty understanding spoken digits in the presence of background noise, even with the use of hearing aids. They may rely heavily on visual cues, such as sign language, lip reading, or written communication, to communicate effectively. In some cases, cochlear implants might be considered to improve their hearing ability.',
+    // 'Profound hearing loss: People with profound hearing loss are unable to perceive speech in noisy environments, even with the use of hearing aids or cochlear implants. They typically rely on alternative methods of communication, such as sign language or written text, to engage with others. In some cases, they may also benefit from assistive listening devices or other technological aids to enhance their communication abilities.',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    const double opacity = 1.0;
-
-    List<LineChartBarData> allSpots = [];
-
-    LineChartBarData getEarData(List<FlSpot> leftSpots, Color color) {
-      return LineChartBarData(
-        spots: leftSpots,
-        color: color,
-        barWidth: 2,
-        isStrokeCapRound: true,
-        dotData: FlDotData(
-            show: true,
-            getDotPainter: (spot, percent, barData, index) {
-              return FlDotCirclePainter(
-                radius: 4,
-                color: color.withOpacity(opacity),
-                strokeWidth: 2,
-                strokeColor: color.withOpacity(opacity),
-              );
-            }),
-      );
-    }
-
-    widget.dataColor.forEach((index, val) {
-      // print('data: $data, color: $color');
-
-      allSpots.add(getEarData(val[0], val[1]));
-    });
-
-    return LineChart(
-      LineChartData(
-        lineTouchData: LineTouchData(
-          handleBuiltInTouches: true,
-          touchTooltipData: LineTouchTooltipData(
-            tooltipBgColor: Colors.blueGrey.withOpacity(0.7),
-          ),
-        ),
-        titlesData: FlTitlesData(
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          bottomTitles: AxisTitles(
-            axisNameSize: 20,
-            axisNameWidget: const Text(
-              'Frequency - Hz',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) => bottomTitleWidgets(value, meta),
-              reservedSize: 40,
+    return ListView.builder(
+      itemCount: dinDescriptions.length,
+      shrinkWrap: true,
+      reverse: false,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+            child: ListTile(
+              title: Text(dinDescriptions[index]),
             ),
           ),
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          leftTitles: AxisTitles(
-            axisNameSize: 20,
-            axisNameWidget: const Text(
-              'Volume - dB',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            sideTitles: SideTitles(
-              showTitles: true,
-              interval: 0.01,
-              getTitlesWidget: (value, meta) => leftTitleWidgets(value, meta),
-              reservedSize: 40,
-            ),
-          ),
-        ),
-        lineBarsData: allSpots,
-        minX: 0,
-        maxX: 8000,
-        minY: 0,
-        maxY: 0.2,
-      ),
-      swapAnimationDuration: const Duration(milliseconds: 0),
+        );
+      },
     );
   }
 }
@@ -150,29 +57,15 @@ class Test2Result extends StatefulWidget {
 
 class _Test2ResultState extends State<Test2Result> {
 
-  List<bool> checkedStates = [];
-  late Widget plot;
+
   late Widget pastData;
-  bool loading = false;
-  bool initFlag = true;
-  List<Color> colors = [];
-  int lastTapped = 0;
-  List<Widget> row = [];
+  Widget description = DINResultsList();
 
 
-  LinkedHashMap dataColorTime = LinkedHashMap(); // index: [data, color, time]
-  // Map<dynamic,Color> dataColor = {};
-  final List<String> frequencies = [
-    '500',
-    '1000',
-    '2000',
-    '3000',
-    '4000',
-    '6000',
-    '8000'
-  ];
-
-
+  @override
+  initState() {
+    super.initState();
+  }
 
 
 
@@ -219,7 +112,7 @@ class _Test2ResultState extends State<Test2Result> {
       final double saturation = 0.7 + random.nextDouble() * 0.2;
       final double lightness = 0.7 + random.nextDouble() * 0.2;
       final HSLColor hslColorLeft =
-      HSLColor.fromAHSL(1.0, hue.toDouble(), saturation, lightness);
+          HSLColor.fromAHSL(1.0, hue.toDouble(), saturation, lightness);
       final HSLColor hslColorRight = HSLColor.fromAHSL(
           1.0, hue.toDouble(), saturation + 0.1, lightness + 0.1);
 
@@ -231,6 +124,7 @@ class _Test2ResultState extends State<Test2Result> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
     final appUser = Provider.of<AppUser?>(context);
@@ -240,132 +134,14 @@ class _Test2ResultState extends State<Test2Result> {
       return const AuthHome();
     }
     print(appUserData.data);
-    if (appUserData.data['test1'].length == 0) {
+    if (appUserData.data['test2'] == null || appUserData.data['test2'].isEmpty ) {
       setState(() {
-        plot = const Text('No data');
         pastData = const Text('No data');
       });
     } else {
-      if (initFlag) {
-        setState(() {
-          checkedStates =
-          List<bool>.filled(appUserData.data['test1'].length, false);
-          checkedStates[checkedStates.length - 1] = true;
-          colors = generateDistinctColors(checkedStates.length);
-          initFlag = false;
-        });
-      }
-
-      if (checkedStates.isEmpty) {
-        setState(() {
-          loading = true;
-        });
-      } else {
-        setState(() {
-          loading = false;
-        });
-      }
-
-      List filterData = []; // [index, data, time]
-      for (int i = 0; i < appUserData.data['test1']!.length; i++) {
-        if (checkedStates[i]) {
-          filterData.add([
-            i,
-            appUserData.data['test1']![i],
-            appUserData.data['test1']![i]['time']
-          ]);
-        }
-      }
-
-      List<bool> flatCheckedStates = [];
-      for (int i = 0; i < checkedStates.length; i++) {
-        if (checkedStates[i]) {
-          flatCheckedStates.add(true);
-          flatCheckedStates.add(true);
-        } else {
-          flatCheckedStates.add(false);
-          flatCheckedStates.add(false);
-        }
-      }
-
-      List filterColor = List.generate(colors.length, (i) => colors[i])
-          .where((e) => flatCheckedStates[colors.indexOf(e)])
-          .toList();
-      print('filterData  ${filterData}');
-      print('All Colors ${colors}');
-      print('filterColor ${filterColor}');
-      print('flatCheckedStates ${flatCheckedStates}');
-
       setState(() {
-        dataColorTime = LinkedHashMap();
-        row = [];
-      });
-
-      for (int i = 0; i < filterData.length; i++) {
-        List<FlSpot> leftSpots = [];
-        List<FlSpot> rightSpots = [];
-        for (String frequency in frequencies) {
-          leftSpots.add(FlSpot(double.parse(frequency),
-              filterData[i][1][frequency][0].toDouble()));
-          rightSpots.add(FlSpot(double.parse(frequency),
-              filterData[i][1][frequency][1].toDouble()));
-        }
-        setState(() {
-          dataColorTime[2 * filterData[i][0]] = [
-            leftSpots,
-            filterColor[2 * i],
-            filterData[i][2]
-          ];
-          dataColorTime[2 * filterData[i][0] + 1] = [
-            rightSpots,
-            filterColor[2 * i + 1],
-            filterData[i][2]
-          ];
-        });
-      }
-
-      if (checkedStates[lastTapped]) {
-        var tempData1 = dataColorTime.remove(2 * lastTapped);
-        var tempData2 = dataColorTime.remove(2 * lastTapped + 1);
-        dataColorTime[2 * lastTapped] = tempData1;
-        dataColorTime[2 * lastTapped + 1] = tempData2;
-      }
-
-      print('dataColor $dataColorTime');
-
-      setState(() {
-        bool flag = true;
-        dataColorTime.forEach((index, val) {
-          // print('data: $data, color: $color');
-
-          if (flag) {
-            row.add(Text(
-              '${getTitles(val[2])} -- ',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12.0),
-            ));
-            row.add(const SizedBox(width: 4));
-          }
-          row.add(Container(
-            width: 10,
-            height: 10,
-            decoration: BoxDecoration(color: val[1], shape: BoxShape.circle),
-          ));
-          row.add(const SizedBox(width: 4));
-          if (flag) {
-            row.add(const Text('Left Ear', style: TextStyle(fontSize: 12)));
-            flag = false;
-          } else {
-            row.add(const Text('Right Ear', style: TextStyle(fontSize: 12)));
-            flag = true;
-          }
-        });
-      });
-
-      setState(() {
-        plot = _LineChart(dataColor: dataColorTime);
         pastData = ListView.builder(
-            itemCount: appUserData.data['test1'].length,
+            itemCount: appUserData.data['test2'].length,
             shrinkWrap: true,
             reverse: false,
             physics: const NeverScrollableScrollPhysics(),
@@ -376,30 +152,22 @@ class _Test2ResultState extends State<Test2Result> {
                   margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
                   child: InkWell(
                     onTap: () {
-                      setState(() {
-                        lastTapped = index;
-                        checkedStates[index] = !checkedStates[index];
-                      });
 
                       print('tapping $index');
-                      print(checkedStates);
+
                     },
                     child: ListTile(
-                      leading: const CircleAvatar(
+                      leading: CircleAvatar(
                         radius: 30.0,
-                        backgroundImage: AssetImage('assets/ears.png'),
+                        child: Image.asset(
+                          'assets/test2.png',
+                          width: 60,
+                          height: 60,
+                        ),
                       ),
                       title: Text(
-                          getTitles(appUserData.data['test1']![index]['time'])),
-                      subtitle: const Text('Test Results'),
-                      trailing: Icon(
-                        checkedStates[index]
-                            ? Icons.check_circle
-                            : Icons.circle,
-                        color: checkedStates[index]
-                            ? Colors.purple[400]
-                            : Colors.grey,
-                      ),
+                          getTitles(appUserData.data['test2']![index]['time'])),
+                      subtitle: Text(appUserData.data['test2']![index]['noiseIntensity']),
                     ),
                   ),
                 ),
@@ -408,49 +176,36 @@ class _Test2ResultState extends State<Test2Result> {
       });
     }
 
-    return loading
-        ? Loading()
-        : SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 20.0, width: double.infinity),
-                  const Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Text(
-                      'Test 2 Results',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24.0),
-                    ),
-                  ),
-                  pastData,
-                  const Padding(
-                    padding: EdgeInsets.only(top:20.0),
-                    child: Text(
-                      'Audiometry Results',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24.0),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 500,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20, bottom: 20, right: 40, left: 20),
-                      child: plot,
-                    ),
-                  ),
-                  const SizedBox(height: 5.0, width: double.infinity),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: row,
-                  ),
 
-                  const SizedBox(height: 50.0, width: double.infinity),
-                ],
-              ),
-            );
 
+    return SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20.0, width: double.infinity),
+                const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Text(
+                    'Digits in Noise Results',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                ),
+                pastData,
+                const SizedBox(height: 50.0, width: double.infinity),
+                const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Text(
+                    'Results Description',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                ),
+                description,
+                const SizedBox(height: 50.0, width: double.infinity),
+              ],
+            ),
+          );
   }
 }

@@ -35,7 +35,8 @@ class _LineChartState extends State<_LineChart> {
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 8,
-      child: Text(value.toStringAsFixed(2), style: style),
+      child: Text(value.toStringAsFixed(0), style: style),
+
     );
   }
 
@@ -124,7 +125,7 @@ class _LineChartState extends State<_LineChart> {
             ),
             sideTitles: SideTitles(
               showTitles: true,
-              interval: 0.01,
+              interval: 5,
               getTitlesWidget: (value, meta) => leftTitleWidgets(value, meta),
               reservedSize: 40,
             ),
@@ -134,7 +135,7 @@ class _LineChartState extends State<_LineChart> {
         minX: 0,
         maxX: 8000,
         minY: 0,
-        maxY: 0.2,
+        maxY: 100,
       ),
       swapAnimationDuration: const Duration(milliseconds: 0),
     );
@@ -226,6 +227,11 @@ class _Test1ResultState extends State<Test1Result> {
     return colors;
   }
 
+  double volumeToDB(double volume) {
+    return 80-20*log(1/(volume+0.01)) / ln10;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final appUser = Provider.of<AppUser?>(context);
@@ -301,9 +307,9 @@ class _Test1ResultState extends State<Test1Result> {
         List<FlSpot> rightSpots = [];
         for (String frequency in frequencies) {
           leftSpots.add(FlSpot(double.parse(frequency),
-              filterData[i][1][frequency][0].toDouble()));
+              volumeToDB(filterData[i][1][frequency][0].toDouble())));
           rightSpots.add(FlSpot(double.parse(frequency),
-              filterData[i][1][frequency][1].toDouble()));
+              volumeToDB(filterData[i][1][frequency][1].toDouble())));
         }
         setState(() {
           dataColorTime[2 * filterData[i][0]] = [
@@ -388,9 +394,14 @@ class _Test1ResultState extends State<Test1Result> {
                       print(checkedStates);
                     },
                     child: ListTile(
-                      leading: const CircleAvatar(
+                      leading: CircleAvatar(
                         radius: 30.0,
-                        backgroundImage: AssetImage('assets/ears.png'),
+                        child: Image.asset(
+                          'assets/test1.png',
+                          width: 60,
+                          height: 60,
+
+                        ),
                       ),
                       title: Text(
                           getTitles(appUserData.data['test1']![index]['time'])),

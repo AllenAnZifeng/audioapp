@@ -12,8 +12,8 @@ class Practice1 extends StatefulWidget {
 }
 
 class _Practice1State extends State<Practice1> {
-  // String buttonState = 'Start';
-  String buttonState = 'End';
+  String buttonState = 'Start';
+  // String buttonState = 'End';
   Map<String, String> textDict = {
     'Start': 'Start',
     'InTest': 'I heard it!',
@@ -160,9 +160,7 @@ class _Practice1State extends State<Practice1> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 10.0, width: double.infinity),
-
-            const SizedBox(height: 10.0, width: double.infinity),
+            const SizedBox(height: 20.0, width: double.infinity),
             const Padding(
               padding: EdgeInsets.all(20.0),
               child: Text(

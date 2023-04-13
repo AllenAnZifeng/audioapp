@@ -8,6 +8,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'dart:typed_data';
 
+import '../test2/practice2.dart';
+
 
 class Sound extends StatefulWidget {
   final String test;
@@ -133,7 +135,11 @@ class _SoundState extends State<Sound> {
                         );
                       }
                       else if (widget.test == 'test2'){
-                        GoRouter.of(context).go('/test2');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Practice2()),
+                        );
                       }
                       else if (widget.test == 'test3'){
                         GoRouter.of(context).go('/test3');
