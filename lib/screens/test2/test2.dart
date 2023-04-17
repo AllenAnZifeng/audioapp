@@ -113,11 +113,15 @@ class _Test2State extends State<Test2> {
   }
 
   submitData() async {
-
+    setState(() {
+      buttons = [];
+    });
     setState(() {
       buttonState = 'End';
       buttonVisible = false;
     });
+
+
     double noiseIntensity = parseFileName(file).noiseIntensity;
     if (noiseIntensity == 0.1) {
       data['noiseIntensity'] = 'Normal hearing';
@@ -201,6 +205,8 @@ class _Test2State extends State<Test2> {
           });
           await submitData();
           await _endDialogBuilder(context);
+
+
         }
       },
       child: Text(generateRandomDigits(parseFileName(file).digits),
@@ -225,6 +231,8 @@ class _Test2State extends State<Test2> {
           });
           await submitData();
           await _endDialogBuilder(context);
+
+
         }
       },
       child: Text(generateRandomDigits(parseFileName(file).digits),
@@ -232,10 +240,10 @@ class _Test2State extends State<Test2> {
     );
     var trueChoice = ElevatedButton(
       onPressed: () async {
-
-
         await submitData();
         await _endDialogBuilder(context);
+
+
       },
       child: Text(parseFileName(file).digits,
           style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),

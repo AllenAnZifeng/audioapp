@@ -321,10 +321,11 @@ class _Test1State extends State<Test1> {
                       style: TextStyle(fontSize: 24.0),
                     ),
                   ),
+
                   const Padding(
                     padding: EdgeInsets.all(20.0),
                     child: Text(
-                      'Only clicking once during the beeps.',
+                      'Click the button immediately once hear the beeps.',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 24.0),
                     ),

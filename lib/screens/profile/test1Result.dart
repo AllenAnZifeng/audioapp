@@ -460,7 +460,15 @@ class _Test1ResultState extends State<Test1Result> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: row,
                 ),
-                const SizedBox(height: 50.0, width: double.infinity),
+                const SizedBox(height: 20.0, width: double.infinity),
+                const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Text(
+                    'Disclaimer: The audio output device is not calibrated for this test. The plotted audiogram might not be accurate.This test is not a substitute for a medical diagnosis. If you have any concerns about your hearing, please consult a medical professional.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                ),
               ],
             ),
           );

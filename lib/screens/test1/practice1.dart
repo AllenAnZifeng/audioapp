@@ -173,7 +173,7 @@ class _Practice1State extends State<Practice1> {
             const Padding(
               padding: EdgeInsets.all(20.0),
               child: Text(
-                'Click the button once during the beeps.',
+                'Click the button immediately once hear the beeps.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 24.0),
               ),
