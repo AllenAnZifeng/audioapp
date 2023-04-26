@@ -36,8 +36,10 @@ class MyApp extends StatelessWidget {
         builder: (context, state) => Home(),
       ),
       GoRoute(
-        path: "/profile",
-        builder: (context, state) => Profile(),
+        path: "/profile/:index",
+        builder: (context, state) => Profile(
+          initIndex: int.parse(state.params['index']!),
+        ),
       ),
     ],
   );

@@ -4,6 +4,7 @@ import 'package:audioapp/screens/test2/test2.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:math';
 
 import 'package:provider/provider.dart';
@@ -170,13 +171,13 @@ class _Test2State extends State<Test2> {
               ),
               child: const Text('Next'),
               onPressed: () {
-                // GoRouter.of(context).go('/profile');
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Profile(
-                              initIndex: 1,
-                            )));
+                GoRouter.of(context).go('/profile/1');
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => Profile(
+                //               initIndex: 1,
+                //             )));
               },
             )
           ],

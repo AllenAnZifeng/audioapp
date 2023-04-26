@@ -196,9 +196,9 @@ class _Test1State extends State<Test1> {
               ),
               child: const Text('Next'),
               onPressed: () {
-                // GoRouter.of(context).go('/profile');
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Profile(initIndex: 0,)));
+                GoRouter.of(context).go('/profile/0');
+                // Navigator.push(context,
+                //     MaterialPageRoute(builder: (context) => Profile(initIndex: 0,)));
               },
             )
           ],

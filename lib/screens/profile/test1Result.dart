@@ -433,7 +433,7 @@ class _Test1ResultState extends State<Test1Result> {
                 const Padding(
                   padding: EdgeInsets.all(20.0),
                   child: Text(
-                    'Test 1 Results',
+                    'Audiometry Results',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 24.0),
                   ),
@@ -442,7 +442,7 @@ class _Test1ResultState extends State<Test1Result> {
                 const Padding(
                   padding: EdgeInsets.only(top: 20.0),
                   child: Text(
-                    'Audiometry Results',
+                    'Audiograms',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 24.0),
                   ),

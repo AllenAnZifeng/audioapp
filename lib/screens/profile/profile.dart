@@ -154,6 +154,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               ),
               body: TabBarView(
                 controller: _tabController,
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   Test1Result(),
                   Test2Result(),

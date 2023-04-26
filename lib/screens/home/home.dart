@@ -93,7 +93,7 @@ class _HomeState extends State<Home> {
             ),
             TextButton.icon(
               onPressed: () => {
-                GoRouter.of(context).go('/profile')
+               GoRouter.of(context).go('/profile/0')
               },
 
               icon: Icon(
