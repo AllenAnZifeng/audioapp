@@ -36,6 +36,7 @@ class _Test2State extends State<Test2> {
   Map<String, String> textDict = {
     'Start': 'Start',
     'InTest': 'Make a choice',
+    'Loading': 'Loading...',
     'End': 'Go to Profile',
   };
   List<Widget> buttons = [];
@@ -118,7 +119,7 @@ class _Test2State extends State<Test2> {
       buttons = [];
     });
     setState(() {
-      buttonState = 'End';
+      buttonState = 'Loading';
       buttonVisible = false;
     });
 
@@ -137,6 +138,11 @@ class _Test2State extends State<Test2> {
     print(data);
     final appUser = Provider.of<AppUser?>(context, listen: false);
     await DatabaseService(uid: appUser!.uid).updateUserAudioData('test2', data);
+    setState(() {
+      buttonState = 'End';
+
+    });
+
   }
 
   String generateRandomDigits(String existing_code) {
@@ -306,7 +312,7 @@ class _Test2State extends State<Test2> {
             ),
             const SizedBox(height: 20.0, width: double.infinity),
             ElevatedButton(
-              onPressed: buttonState == 'InTest'
+              onPressed: buttonState == 'InTest' || buttonState == 'Loading'
                   ? null
                   : () {
                       if (buttonState == 'Start') {
