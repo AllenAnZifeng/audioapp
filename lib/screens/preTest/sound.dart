@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'dart:typed_data';
 
 import '../test2/practice2.dart';
+import '../test3/practice3.dart';
 
 
 class Sound extends StatefulWidget {
@@ -142,7 +143,11 @@ class _SoundState extends State<Sound> {
                         );
                       }
                       else if (widget.test == 'test3'){
-                        GoRouter.of(context).go('/test3');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Practice3()),
+                        );
                       }
                       else{
                         debugPrint('test error! Going to /');
