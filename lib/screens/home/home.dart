@@ -4,12 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:audioapp/services/auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:audioapp/models/brew.dart';
-
 import '../../models/appUser.dart';
 import '../authenticate/authHome.dart';
-import '../profile/profile.dart';
 
 class Home extends StatefulWidget {
   // final Function toggleView;
@@ -51,11 +47,7 @@ class _HomeState extends State<Home> {
             builder: (context) => HeadPhone(test: test)));
     }
 
-    return StreamProvider<List<Brew>?>.value(
-      value: DatabaseService(uid: appUser.uid).getBrews,
-      initialData: null,
-
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.purple[600],
@@ -295,7 +287,6 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }

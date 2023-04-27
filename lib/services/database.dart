@@ -65,21 +65,21 @@ class DatabaseService {
   // }
 
   // brew list from snapshot
-  List<Brew> _brewListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) {
-      return Brew(
-        name: doc['name'] ?? '',
-        sugars: doc['sugars'] ?? '0',
-        strength: doc['strength'] ?? 0,
-      );
-    }).toList();
-  }
-
-
-  Stream<List<Brew>> get getBrews {
-
-    return brewCollection.snapshots().map(_brewListFromSnapshot);
-  }
+  // List<Brew> _brewListFromSnapshot(QuerySnapshot snapshot) {
+  //   return snapshot.docs.map((doc) {
+  //     return Brew(
+  //       name: doc['name'] ?? '',
+  //       sugars: doc['sugars'] ?? '0',
+  //       strength: doc['strength'] ?? 0,
+  //     );
+  //   }).toList();
+  // }
+  //
+  //
+  // Stream<List<Brew>> get getBrews {
+  //
+  //   return brewCollection.snapshots().map(_brewListFromSnapshot);
+  // }
 
   // user data from snapshot
   AppUserData _appUserDataFromSnapshot(DocumentSnapshot snapshot) {
