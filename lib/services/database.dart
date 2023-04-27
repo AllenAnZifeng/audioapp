@@ -1,5 +1,4 @@
 import 'package:audioapp/models/appUser.dart';
-import 'package:audioapp/models/brew.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
