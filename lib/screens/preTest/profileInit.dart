@@ -9,8 +9,10 @@ import '../../services/database.dart';
 
 
 const List<String> _genders = <String>[
-  'male',
-  'female'
+  'Please Specify',
+  'Male',
+  'Female',
+  'Other'
 ];
 
 class _DatePickerItem extends StatelessWidget {
@@ -139,45 +141,88 @@ class _ProfileInitState extends State<ProfileInit> {
               style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 40.0, width: double.infinity),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('Gender: ',style: const TextStyle(
-                  fontSize: 22.0,)),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  // Display a CupertinoPicker with list of fruits.
-                  onPressed: () => _showDialog(
-                    CupertinoPicker(
-                      magnification: 1.22,
-                      squeeze: 1.2,
-                      useMagnifier: true,
-                      itemExtent: 45,
-                      // This is called when selected item is changed.
-                      onSelectedItemChanged: (int selectedItem) {
-                        setState(() {
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: <Widget>[
+            //     const Text('Gender: ',style: const TextStyle(
+            //       fontSize: 22.0,)),
+            //     CupertinoButton(
+            //       padding: EdgeInsets.zero,
+            //       // Display a CupertinoPicker with list of fruits.
+            //       onPressed: () => _showDialog(
+            //         CupertinoPicker(
+            //           magnification: 1.22,
+            //           squeeze: 1.2,
+            //           useMagnifier: true,
+            //           itemExtent: 45,
+            //           // This is called when selected item is changed.
+            //           onSelectedItemChanged: (int selectedItem) {
+            //             setState(() {
+            //                 gender = selectedItem;
+            //             });
+            //           },
+            //           children:
+            //           List<Widget>.generate(_genders.length, (int index) {
+            //             return Center(
+            //               child: Text(
+            //                 _genders[index],
+            //               ),
+            //             );
+            //           }),
+            //         ),
+            //       ),
+            //       // This displays the selected fruit name.
+            //       child: Text(
+            //         _genders[gender],
+            //         style: const TextStyle(
+            //           fontSize: 22.0,
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+
+
+            Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: _DatePickerItem(
+                children: <Widget>[
+                  const Text('Gender',style: TextStyle(fontSize: 22.0) ,),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    // Display a CupertinoPicker with list of fruits.
+                    onPressed: () => _showDialog(
+                      CupertinoPicker(
+                        magnification: 1.22,
+                        squeeze: 1.2,
+                        useMagnifier: true,
+                        itemExtent: 45,
+                        // This is called when selected item is changed.
+                        onSelectedItemChanged: (int selectedItem) {
+                          setState(() {
                             gender = selectedItem;
-                        });
-                      },
-                      children:
-                      List<Widget>.generate(_genders.length, (int index) {
-                        return Center(
-                          child: Text(
-                            _genders[index],
-                          ),
-                        );
-                      }),
+                          });
+                        },
+                        children:
+                        List<Widget>.generate(_genders.length, (int index) {
+                          return Center(
+                            child: Text(
+                              _genders[index],
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                    // This displays the selected fruit name.
+                    child: Text(
+                      _genders[gender],
+                      style: const TextStyle(
+                        fontSize: 22.0,
+                      ),
                     ),
                   ),
-                  // This displays the selected fruit name.
-                  child: Text(
-                    _genders[gender],
-                    style: const TextStyle(
-                      fontSize: 22.0,
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
 
             const SizedBox(height:120.0, width: double.infinity),

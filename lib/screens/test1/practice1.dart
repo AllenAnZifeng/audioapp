@@ -12,8 +12,8 @@ class Practice1 extends StatefulWidget {
 }
 
 class _Practice1State extends State<Practice1> {
-  String buttonState = 'Start';
-  // String buttonState = 'End';
+  // String buttonState = 'Start';
+  String buttonState = 'End';
   Map<String, String> textDict = {
     'Start': 'Start',
     'InTest': 'I heard it!',

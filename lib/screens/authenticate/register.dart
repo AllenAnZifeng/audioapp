@@ -19,8 +19,8 @@ class _RegisterState extends State<Register> {
   final _formkey = GlobalKey<FormState>();
   bool loading = false;
 
-  String email ="a@a.com";
-  String password ="123456";
+  String email ="";
+  String password ="";
   String error ="";
 
   @override
@@ -58,7 +58,7 @@ class _RegisterState extends State<Register> {
                     children: [
                       const SizedBox(height: 20.0),
                       TextFormField(
-                        initialValue: 'a@a.com',
+                        initialValue: '',
                         onChanged: (val) {
                           setState(() => email = val);
                         },
@@ -68,7 +68,7 @@ class _RegisterState extends State<Register> {
                       ),
                       const SizedBox(height: 20.0),
                       TextFormField(
-                        initialValue: '123456',
+                        initialValue: '',
                         onChanged: (val) {
                           setState(() => password = val);
                         },

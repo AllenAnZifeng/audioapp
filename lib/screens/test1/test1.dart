@@ -96,11 +96,11 @@ class _Test1State extends State<Test1> {
     });
   }
 
-  startPractice() async {
-    // List<int> frequencies = [500, 1000, 2000, 3000, 4000, 6000, 8000];
+  startTest() async {
+    List<int> frequencies = [500, 1000, 2000, 3000, 4000, 6000, 8000];
 
-    List<int> frequencies = [500, 1000];
-    List<double> vols = [0.02, 0.03, 0.04];
+    // List<int> frequencies = [500, 1000];
+    List<double> vols = [0.02, 0.03, 0.04,0.07,0.1,0.2,0.3];
     List<int> ears = [0, 1];
 
     for (int k=0; k <ears.length;k++) {
@@ -197,8 +197,7 @@ class _Test1State extends State<Test1> {
               child: const Text('Next'),
               onPressed: () {
                 GoRouter.of(context).go('/profile/0');
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: (context) => Profile(initIndex: 0,)));
+
               },
             )
           ],
@@ -237,12 +236,14 @@ class _Test1State extends State<Test1> {
                 setState(() {
                   pause = false;
                 });
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
+                // Navigator.of(context).pop();
+                // Navigator.of(context).pop();
+                // Navigator.of(context).pop();
+                // Navigator.of(context).pop();
+                // Navigator.of(context).pop();
+                // Navigator.of(context).pop();
+
+                GoRouter.of(context).go('/profile/0');
               },
             ),
           ],
@@ -345,36 +346,36 @@ class _Test1State extends State<Test1> {
                         setState(() {
                           buttonState = 'InTest';
                         });
-                        startPractice();
+                        startTest();
                       } else if (buttonState == 'InTest') {
-                        String msg = '';
-                        if (clickHandler()) {
-                          msg = 'Nice Catch!';
-                        } else {
-                          msg = 'You missed it!';
-                        }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            action: SnackBarAction(
-                              label: 'Close',
-                              onPressed: () {
-                                // Code to execute.
-                              },
-                            ),
-                            content: Text(msg),
-                            duration: const Duration(milliseconds: 200),
-                            width: 280.0,
-                            // Width of the SnackBar.
-                            padding: const EdgeInsets.symmetric(
-                              horizontal:
-                                  8.0, // Inner padding for SnackBar content.
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                        );
+                        // String msg = '';
+                        // if (clickHandler()) {
+                        //   msg = 'Nice Catch!';
+                        // } else {
+                        //   msg = 'You missed it!';
+                        // }
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //   SnackBar(
+                        //     action: SnackBarAction(
+                        //       label: 'Close',
+                        //       onPressed: () {
+                        //         // Code to execute.
+                        //       },
+                        //     ),
+                        //     content: Text(msg),
+                        //     duration: const Duration(milliseconds: 200),
+                        //     width: 280.0,
+                        //     // Width of the SnackBar.
+                        //     padding: const EdgeInsets.symmetric(
+                        //       horizontal:
+                        //           8.0, // Inner padding for SnackBar content.
+                        //     ),
+                        //     behavior: SnackBarBehavior.floating,
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(10.0),
+                        //     ),
+                        //   ),
+                        // );
                       } else if (buttonState == 'End') {
                         print('end');
                         Navigator.push(context,

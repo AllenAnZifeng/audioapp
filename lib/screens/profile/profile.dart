@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:audioapp/screens/authenticate/authHome.dart';
 import 'package:audioapp/screens/profile/test2Result.dart';
+import 'package:audioapp/screens/profile/test3Result.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -155,10 +156,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               body: TabBarView(
                 controller: _tabController,
                 physics: const NeverScrollableScrollPhysics(),
-                children: [
+                children: const [
                   Test1Result(),
                   Test2Result(),
-                  Icon(Icons.directions_bike),
+                  Test3Result(),
                 ],
               ),
             ),

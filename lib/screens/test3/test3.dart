@@ -1,6 +1,3 @@
-import 'package:audioapp/screens/profile/test2Result.dart';
-import 'package:audioapp/screens/test1/test1.dart';
-import 'package:audioapp/screens/test2/test2.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -13,13 +10,6 @@ import '../../models/appUser.dart';
 import '../../services/database.dart';
 import '../profile/profile.dart';
 
-class ParsedFileName {
-  final String digits;
-  final double noiseIntensity;
-
-  ParsedFileName({required this.digits, required this.noiseIntensity});
-}
-
 class Test3 extends StatefulWidget {
   const Test3({Key? key}) : super(key: key);
 
@@ -28,6 +18,7 @@ class Test3 extends StatefulWidget {
 }
 
 class _Test3State extends State<Test3> {
+  int score = 0;
   bool buttonVisible = false;
 
   String buttonState = 'Start';
@@ -44,19 +35,13 @@ class _Test3State extends State<Test3> {
   Map<String, dynamic> data = {};
 
   final player = AudioPlayer();
-  List<String> fileNamesNormal = [
-    '022-0.1.wav',
-    '843-0.1.wav',
-    '882-0.1.wav',
-    '950-0.1.wav',
-    '985-0.1.wav',
+  List<String> fileNamesPureTone = [
+    'pure_tone_500.wav',
+    'pure_tone_1000.wav',
   ];
 
-  List<String> fileNamesLoss = [
-    '518-0.05.wav',
-    '658-0.05.wav',
-    '670-0.05.wav',
-    '773-0.05.wav',
+  List<String> fileNamesStereo = [
+    'stereo_signal_1000.mp3',
   ];
 
   @override
@@ -66,7 +51,7 @@ class _Test3State extends State<Test3> {
       buttons = generateButtons();
     });
 
-    String randomFileName = getRandomFileName(fileNamesNormal);
+    String randomFileName = getRandomFileName(fileNamesPureTone);
 
     setState(() {
       file = randomFileName;
@@ -89,16 +74,14 @@ class _Test3State extends State<Test3> {
     return randomFileName;
   }
 
-  ParsedFileName parseFileName(String fileName) {
-    print(fileName);
-    if (fileName.length < 3) {
-      return ParsedFileName(digits: '000', noiseIntensity: 0.0);
+  bool isPureTone(String fileName) {
+    List<String> splitName = fileName.split('_');
+    String pure = splitName[0];
+    if (pure == 'pure') {
+      return true;
+    } else {
+      return false;
     }
-    List<String> splitName = fileName.split('-');
-    String digits = splitName[0];
-    double noiseIntensity = double.parse(splitName[1].replaceAll('.wav', ''));
-
-    return ParsedFileName(digits: digits, noiseIntensity: noiseIntensity);
   }
 
   playAudio() async {
@@ -123,44 +106,20 @@ class _Test3State extends State<Test3> {
       buttonVisible = false;
     });
 
-
-    double noiseIntensity = parseFileName(file).noiseIntensity;
-    if (noiseIntensity == 0.1) {
-      data['noiseIntensity'] = 'Normal hearing';
-    } else if (noiseIntensity == 0.05) {
-      data['noiseIntensity'] = 'Mild Loss';
+    if (score < 2) {
+      data['temporalProcessing'] = 'Bad temporal processing';
     } else {
-      data['noiseIntensity'] = 'Severe Loss';
+      data['temporalProcessing'] = 'Good temporal processing';
     }
     setState(() {
       data['time'] = DateTime.now().millisecondsSinceEpoch.toString();
     });
     print(data);
     final appUser = Provider.of<AppUser?>(context, listen: false);
-    await DatabaseService(uid: appUser!.uid).updateUserAudioData('test2', data);
+    await DatabaseService(uid: appUser!.uid).updateUserAudioData('test3', data);
     setState(() {
       buttonState = 'End';
-
     });
-
-  }
-
-  String generateRandomDigits(String existing_code) {
-    final random = Random();
-    String result = '';
-    bool flag = true;
-    while (flag) {
-      result = '';
-      for (int i = 0; i < 3; i++) {
-        int randomNumber = random.nextInt(10);
-        result += randomNumber.toString();
-      }
-      if (result != existing_code) {
-        flag = false;
-      }
-    }
-
-    return result;
   }
 
   Future<void> _endDialogBuilder(BuildContext context) {
@@ -177,13 +136,7 @@ class _Test3State extends State<Test3> {
               ),
               child: const Text('Next'),
               onPressed: () {
-                GoRouter.of(context).go('/profile/1');
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => Profile(
-                //               initIndex: 1,
-                //             )));
+                GoRouter.of(context).go('/profile/2');
               },
             )
           ],
@@ -193,76 +146,70 @@ class _Test3State extends State<Test3> {
   }
 
   List<Widget> generateButtons() {
-    var falseChoice1 = ElevatedButton(
-      onPressed: () async {
-        double noiseIntensity = parseFileName(file).noiseIntensity;
-        if (noiseIntensity == 0.1) {
-          String randomFileName = getRandomFileName(fileNamesLoss);
+    if (isPureTone(file)) {
+      var trueChoice = ElevatedButton(
+        onPressed: () async {
           setState(() {
-            file = randomFileName;
+            score += 1;
+            file = getRandomFileName(fileNamesStereo);
+            buttonState = 'Loading';
           });
-
-          print('Random file name: $randomFileName');
-
-          await Future.delayed(const Duration(milliseconds: 500), () {});
+          // wait for 1 second
+          await Future.delayed(const Duration(seconds: 1));
           startTest();
-        } else {
+        },
+        child: const Text('Same',
+            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+      );
+
+      var falseChoice = ElevatedButton(
+        onPressed: () async {
           setState(() {
-            file = "000-0.0"; // severe loss
+            file = getRandomFileName(fileNamesStereo);
+            buttonState = 'Loading';
+          });
+          await Future.delayed(const Duration(seconds: 1));
+          startTest();
+        },
+        child: const Text('Different',
+            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+      );
+
+      var buttons = [
+        if (buttonVisible) trueChoice,
+        if (buttonVisible) falseChoice,
+      ];
+
+      return buttons;
+    } else {
+      var trueChoice = ElevatedButton(
+        onPressed: () async {
+          setState(() {
+            score += 1;
           });
           await submitData();
           await _endDialogBuilder(context);
+        },
+        child: const Text('Different',
+            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+      );
 
-
-        }
-      },
-      child: Text(generateRandomDigits(parseFileName(file).digits),
-          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
-    );
-    var falseChoice2 =  ElevatedButton(
-      onPressed: () async {
-        double noiseIntensity = parseFileName(file).noiseIntensity;
-        if (noiseIntensity == 0.1) {
-          String randomFileName = getRandomFileName(fileNamesLoss);
-          setState(() {
-            file = randomFileName;
-          });
-
-          print('Random file name: $randomFileName');
-
-          await Future.delayed(const Duration(milliseconds: 500), () {});
-          startTest();
-        } else {
-          setState(() {
-            file = "000-0.0"; // severe loss
-          });
+      var falseChoice = ElevatedButton(
+        onPressed: () async {
           await submitData();
           await _endDialogBuilder(context);
+        },
+        child: const Text('Same',
+            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+      );
 
+      var buttons = [
+        if (buttonVisible) falseChoice,
+        if (buttonVisible) trueChoice,
+      ];
 
-        }
-      },
-      child: Text(generateRandomDigits(parseFileName(file).digits),
-          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
-    );
-    var trueChoice = ElevatedButton(
-      onPressed: () async {
-        await submitData();
-        await _endDialogBuilder(context);
-
-
-      },
-      child: Text(parseFileName(file).digits,
-          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
-    );
-
-    var buttons = [
-      if (buttonVisible) trueChoice,
-      if (buttonVisible) falseChoice1,
-      if (buttonVisible) falseChoice2,
-    ];
-    buttons.shuffle();
-    return buttons;
+      return buttons;
+    }
   }
 
   @override
@@ -273,7 +220,7 @@ class _Test3State extends State<Test3> {
         scrolledUnderElevation: 4.0,
         elevation: 0,
         title: const Text(
-          'DIN Test',
+          'FM Detection Test',
           style: TextStyle(
               color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
         ),
@@ -296,7 +243,7 @@ class _Test3State extends State<Test3> {
             const Padding(
               padding: EdgeInsets.all(20.0),
               child: Text(
-                '33Choose the matching digits in the noise.',
+                'Decide whether the sounds from two ears are the same or different.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 24.0),
               ),
@@ -305,7 +252,16 @@ class _Test3State extends State<Test3> {
             const Padding(
               padding: EdgeInsets.all(20.0),
               child: Text(
-                'You will only hear one or two sets for this test.',
+                'You will hear two sets for this test.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24.0),
+              ),
+            ),
+            const SizedBox(height: 10.0, width: double.infinity),
+            const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                'Make your choice when prompted.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 24.0),
               ),
@@ -324,12 +280,7 @@ class _Test3State extends State<Test3> {
                       } else if (buttonState == 'InTest') {
                         setState(() {});
                       } else if (buttonState == 'End') {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Profile(
-                                  initIndex: 1,
-                                )));
+                        GoRouter.of(context).go('/profile/2');
                       }
                     },
               child: Padding(

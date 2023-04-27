@@ -228,7 +228,9 @@ class _Test1ResultState extends State<Test1Result> {
   }
 
   double volumeToDB(double volume) {
-    return 80-20*log(1/(volume+0.01)) / ln10;
+    double result = 80-20*log(1/(volume+0.01)) / ln10;
+    String resultString = result.toStringAsFixed(1);
+    return double.parse(resultString);
   }
 
 

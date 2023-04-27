@@ -18,19 +18,16 @@ import 'package:provider/provider.dart';
 import '../../models/appUser.dart';
 import '../../services/auth.dart';
 
-class DINResultsList extends StatelessWidget {
-  final List<String> dinDescriptions = [
-    'Normal hearing: Individuals with normal hearing can accurately perceive and understand spoken digits even in the presence of background noise. They typically experience little to no difficulty in understanding speech in noisy environments, such as busy streets, restaurants, or social gatherings.',
-    'Mild hearing loss: People with mild hearing loss might experience some challenges in understanding spoken digits in noisy environments, but they can still manage to comprehend speech to a certain extent. They may need to rely more on visual cues, such as lip reading or facial expressions, to compensate for the reduced hearing ability.',
-    // 'Moderate hearing loss: Those with moderate hearing loss struggle to understand speech when background noise is present. They often require the use of hearing aids to improve their hearing ability in noisy situations. In addition, they might need to ask others to speak more slowly, clearly, or loudly to facilitate better communication.',
-    'Severe hearing loss: Individuals with severe hearing loss have significant difficulty understanding spoken digits in the presence of background noise, even with the use of hearing aids. They may rely heavily on visual cues, such as sign language, lip reading, or written communication, to communicate effectively. In some cases, cochlear implants might be considered to improve their hearing ability.',
-    // 'Profound hearing loss: People with profound hearing loss are unable to perceive speech in noisy environments, even with the use of hearing aids or cochlear implants. They typically rely on alternative methods of communication, such as sign language or written text, to engage with others. In some cases, they may also benefit from assistive listening devices or other technological aids to enhance their communication abilities.',
+class FMDetectionResultsList extends StatelessWidget {
+  final List<String> FMDetectionDescriptions = [
+    'Good temporal processing: the ability to efficiently and accurately detect and process temporal changes in auditory stimuli - Enhanced speech perception, Accurate pitch perception, Accurate sound localization',
+    'Bad temporal processing: reduced or impaired ability to process and analyze time-based information in auditory stimuli - Impaired speech perception, Poor pitch perception, Inaccurate sound localization',
   ];
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: dinDescriptions.length,
+      itemCount: FMDetectionDescriptions.length,
       shrinkWrap: true,
       reverse: false,
       physics: const NeverScrollableScrollPhysics(),
@@ -39,7 +36,7 @@ class DINResultsList extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Card(
             child: ListTile(
-              title: Text(dinDescriptions[index]),
+              title: Text(FMDetectionDescriptions[index]),
             ),
           ),
         );
@@ -48,25 +45,24 @@ class DINResultsList extends StatelessWidget {
   }
 }
 
-class Test2Result extends StatefulWidget {
-  const Test2Result({Key? key}) : super(key: key);
+class Test3Result extends StatefulWidget {
+  const Test3Result({Key? key}) : super(key: key);
 
   @override
-  State<Test2Result> createState() => _Test2ResultState();
+  State<Test3Result> createState() => _Test3ResultState();
 }
 
-class _Test2ResultState extends State<Test2Result> {
+class _Test3ResultState extends State<Test3Result> {
 
 
   late Widget pastData;
-  Widget description = DINResultsList();
+  Widget description = FMDetectionResultsList();
 
 
   @override
   initState() {
     super.initState();
   }
-
 
 
   String getTitles(value) {
@@ -83,14 +79,14 @@ class _Test2ResultState extends State<Test2Result> {
       return const AuthHome();
     }
     print(appUserData.data);
-    if (appUserData.data['test2'] == null || appUserData.data['test2'].isEmpty ) {
+    if (appUserData.data['test3'] == null || appUserData.data['test3'].isEmpty ) {
       setState(() {
         pastData = const Text('No data');
       });
     } else {
       setState(() {
         pastData = ListView.builder(
-            itemCount: appUserData.data['test2'].length,
+            itemCount: appUserData.data['test3'].length,
             shrinkWrap: true,
             reverse: false,
             physics: const NeverScrollableScrollPhysics(),
@@ -109,14 +105,14 @@ class _Test2ResultState extends State<Test2Result> {
                       leading: CircleAvatar(
                         radius: 30.0,
                         child: Image.asset(
-                          'assets/test2.png',
+                          'assets/test3.png',
                           width: 60,
                           height: 60,
                         ),
                       ),
                       title: Text(
-                          getTitles(appUserData.data['test2']![index]['time'])),
-                      subtitle: Text(appUserData.data['test2']![index]['noiseIntensity']),
+                          getTitles(appUserData.data['test3']![index]['time'])),
+                      subtitle: Text(appUserData.data['test3']![index]['temporalProcessing']),
                     ),
                   ),
                 ),
@@ -136,7 +132,7 @@ class _Test2ResultState extends State<Test2Result> {
                 const Padding(
                   padding: EdgeInsets.all(20.0),
                   child: Text(
-                    'Digits in Noise Results',
+                    'FM Detection Results',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 24.0),
                   ),

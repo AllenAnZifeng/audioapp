@@ -59,7 +59,7 @@ class _Practice3State extends State<Practice3> {
   }
 
   playAudio() async{
-    await player.play(AssetSource("audio/stereo_signal_1000.mp3"));
+    await player.play(AssetSource("audio/stereo_signal_500.mp3"));
   }
 
   startPractice() async {

@@ -21,9 +21,6 @@ class DatabaseService {
 
   Future initializeUserData() async {
     return await brewCollection.doc(uid).set({
-      'sugars': '0',
-      'name': 'new member',
-      'strength': 100,
       'gender': '',
       'dob': '',
       'data': {

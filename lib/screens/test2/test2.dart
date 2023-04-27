@@ -324,12 +324,7 @@ class _Test2State extends State<Test2> {
                       } else if (buttonState == 'InTest') {
                         setState(() {});
                       } else if (buttonState == 'End') {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Profile(
-                                  initIndex: 1,
-                                )));
+                       GoRouter.of(context).go('/profile/1');
                       }
                     },
               child: Padding(

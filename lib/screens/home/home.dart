@@ -1,4 +1,3 @@
-import 'package:audioapp/screens/home/setting_form.dart';
 import 'package:audioapp/screens/preTest/headphone.dart';
 import 'package:audioapp/services/database.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:audioapp/services/auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:audioapp/screens/home/brew_list.dart';
 import 'package:audioapp/models/brew.dart';
 
 import '../../models/appUser.dart';
@@ -30,13 +28,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    void _showSettingsPanel() {
-      showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return SettingForm();
-          });
-    }
 
     final appUser = Provider.of<AppUser?>(context);
     final appUserData = Provider.of<AppUserData?>(context);
@@ -277,7 +268,7 @@ class _HomeState extends State<Home> {
                                 children: const [
                                   Padding(
                                     padding: EdgeInsets.only(top: 15, bottom: 15),
-                                    child: Text('Spatial Sound Test',
+                                    child: Text('Temporal Processing Test',
                                         style: TextStyle(
                                           fontSize: 20.0,
                                           fontWeight: FontWeight.bold,
@@ -285,7 +276,7 @@ class _HomeState extends State<Home> {
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 10),
-                                    child: Text('This test measures your ability to hear sounds coming from different spatial directions.',
+                                    child: Text('This test measures your ability to detect frequency modulated signal as a measure of temporal processing capabilities.',
                                         style: TextStyle(
                                           fontSize: 18.0,
                                         )),
