@@ -2,7 +2,7 @@
     package="ca.mcmaster.audioapp">
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <application
-        android:label="audioapp"
+        android:label="Hearing Pro Lab"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
