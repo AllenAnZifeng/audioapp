@@ -348,6 +348,7 @@ class _Test1State extends State<Test1> {
                         });
                         startTest();
                       } else if (buttonState == 'InTest') {
+                        clickHandler();
                         // String msg = '';
                         // if (clickHandler()) {
                         //   msg = 'Nice Catch!';
